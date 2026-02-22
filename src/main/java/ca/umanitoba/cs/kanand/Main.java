@@ -7,6 +7,6 @@ public class Main {
         System.out.println("Please enter your name below");
         Scanner sc = new Scanner(System.in);
         String name = sc.nextLine();
-
+        PrintMap p = new PrintMap();
     }
 }
