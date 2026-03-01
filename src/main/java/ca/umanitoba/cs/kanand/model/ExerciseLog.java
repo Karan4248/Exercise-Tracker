@@ -18,6 +18,15 @@ public class ExerciseLog {
     private final LocalDateTime timestamp;
     private final double distance;
 
+    /**
+     * Creates a new exercise log entry with a unique ID.
+     *
+     * @param name the activity name (non-empty)
+     * @param exercise the Exercise type
+     * @param route the list of route points (non-empty)
+     * @param distance the total distance covered
+     * @throws IllegalArgumentException if any parameter is invalid
+     */
     public ExerciseLog(String name, Exercise exercise, List<Point> route, double distance) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Activity name cannot be null or empty");
@@ -36,13 +45,50 @@ public class ExerciseLog {
         this.distance = distance;
     }
 
+    /**
+     * Gets the unique ID of this exercise log.
+     *
+     * @return the exercise log ID
+     */
     public int getId() { return id; }
+    /**
+     * Gets the name of the activity.
+     *
+     * @return the activity name
+     */
     public String getName() { return name; }
+
+    /**
+     * Gets a copy of the route points.
+     *
+     * @return a copy of the points list
+     */
     public List<Point> getPoints() { return new ArrayList<>(points); }
+
+    /**
+     * Gets the exercise type for this log.
+     *
+     * @return the Exercise
+     */
     public Exercise getExercise() { return exercise; }
+
+    /**
+     * Gets the timestamp when this activity was recorded.
+     *
+     * @return the LocalDateTime
+     */
     public LocalDateTime getTimestamp() { return timestamp; }
+
+    /**
+     * Gets the total distance covered in this activity.
+     *
+     * @return the distance
+     */
     public double getDistance() { return distance; }
 
+    /**
+     * Resets the ID counter to 1. Used for testing and initialization.
+     */
     public static void resetIdCounter() {
         nextId = 1;
     }

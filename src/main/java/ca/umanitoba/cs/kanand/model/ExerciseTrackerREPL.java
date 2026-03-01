@@ -14,6 +14,11 @@ public class ExerciseTrackerREPL {
     private final Activity activity;
     private boolean running;
 
+    /**
+     * Initializes the REPL with a scanner for user input.
+     *
+     * @param scanner the Scanner for reading user commands
+     */
     public ExerciseTrackerREPL(Scanner scanner) {
         this.scanner = scanner;
         this.grid = null;
@@ -21,6 +26,9 @@ public class ExerciseTrackerREPL {
         this.running = true;
     }
 
+    /**
+     * Starts the main REPL loop, displaying the welcome message and processing commands.
+     */
     public void start() {
         System.out.println("╔════════════════════════════════════════════╗");
         System.out.println("║     Welcome to the Exercise Tracker!       ║");
@@ -35,6 +43,11 @@ public class ExerciseTrackerREPL {
         }
     }
 
+    /**
+     * Processes a user command and executes the corresponding action.
+     *
+     * @param command the command string in uppercase
+     */
     private void processCommand(String command) {
         switch (command) {
             case "HELP" -> showHelp();
@@ -53,6 +66,9 @@ public class ExerciseTrackerREPL {
         }
     }
 
+    /**
+     * Displays the help menu with all available commands and input formats.
+     */
     private void showHelp() {
         System.out.println("""
             ╔══════════════════════════════════════════════════════════════════╗
@@ -79,6 +95,10 @@ public class ExerciseTrackerREPL {
             """);
     }
 
+    /**
+     * Prompts the user to create a new map with specified width and height.
+     * Resets ID counters for obstacles and activities.
+     */
     private void addMap() {
         if (grid != null) {
             System.out.println("A map already exists. Remove it first with REMOVE MAP.");
@@ -99,6 +119,9 @@ public class ExerciseTrackerREPL {
         System.out.println("Map created! Size: " + width + " x " + height);
     }
 
+    /**
+     * Prompts the user to add a rectangular obstacle to the map.
+     */
     private void addObstacle() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
@@ -128,6 +151,9 @@ public class ExerciseTrackerREPL {
         System.out.println("Obstacle added: " + obstacle);
     }
 
+    /**
+     * Prompts the user to add a new activity with a route traced on the map.
+     */
     private void addActivity() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
@@ -179,6 +205,9 @@ public class ExerciseTrackerREPL {
         System.out.println("Activity added: " + log);
     }
 
+    /**
+     * Displays the entire map with all routes and obstacles, along with legend and summary.
+     */
     private void showMap() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
@@ -190,6 +219,9 @@ public class ExerciseTrackerREPL {
         printActivitySummary();
     }
 
+    /**
+     * Displays the map with a single activity's route highlighted.
+     */
     private void showActivity() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
@@ -220,6 +252,12 @@ public class ExerciseTrackerREPL {
         printLegend();
     }
 
+    /**
+     * Renders the grid map with activity routes and obstacles.
+     * If selectedActivity is null, displays all activities.
+     *
+     * @param selectedActivity a specific activity to highlight, or null for all activities
+     */
     private void printMapGrid(ExerciseLog selectedActivity) {
         int width = grid.getWidth();
         int height = grid.getHeight();
@@ -262,6 +300,9 @@ public class ExerciseTrackerREPL {
         System.out.println();
     }
 
+    /**
+     * Displays the map legend explaining the symbols used in the grid.
+     */
     private void printLegend() {
         System.out.println("""
             
@@ -286,6 +327,9 @@ public class ExerciseTrackerREPL {
             """);
     }
 
+    /**
+     * Displays a summary of all activities including distance statistics.
+     */
     private void printActivitySummary() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneWeekAgo = now.minusWeeks(1);
@@ -306,6 +350,9 @@ public class ExerciseTrackerREPL {
         System.out.println("╚═══════════════════════════════════════════════════════════════╝");
     }
 
+    /**
+     * Lists all obstacles currently on the map.
+     */
     private void showObstacles() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
@@ -327,6 +374,9 @@ public class ExerciseTrackerREPL {
         System.out.println("═══════════════════════════════════════\n");
     }
 
+    /**
+     * Lists all recorded activities by ID and name.
+     */
     private void showActivities() {
         List<ExerciseLog> logs = activity.getAllLogs();
         if (logs.isEmpty()) {
@@ -343,6 +393,9 @@ public class ExerciseTrackerREPL {
         System.out.println("═══════════════════════════════════════════════════════════════\n");
     }
 
+    /**
+     * Prompts the user to select and remove an activity by ID.
+     */
     private void removeActivity() {
         if (activity.getAllLogs().isEmpty()) {
             System.out.println("No activities to remove.");
@@ -364,6 +417,9 @@ public class ExerciseTrackerREPL {
         }
     }
 
+    /**
+     * Prompts the user to select and remove an obstacle by ID.
+     */
     private void removeObstacle() {
         if (grid == null) {
             System.out.println("No map exists.");
@@ -391,6 +447,9 @@ public class ExerciseTrackerREPL {
         }
     }
 
+    /**
+     * Removes the entire map and all associated activities and obstacles.
+     */
     private void removeMap() {
         if (grid == null) {
             System.out.println("No map exists.");
@@ -404,6 +463,9 @@ public class ExerciseTrackerREPL {
         System.out.println("Map and all associated data removed.");
     }
 
+    /**
+     * Exits the application with a farewell message.
+     */
     private void quit() {
         System.out.println("Thank you for using Exercise Tracker. Stay active! 🏃");
         running = false;

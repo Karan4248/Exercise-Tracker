@@ -13,6 +13,15 @@ public class ObstaclePlacement {
     private final int height;
     private final Obstacle type;
 
+    /**
+     * Creates an obstacle placement with a unique ID.
+     *
+     * @param location the top-left corner of the obstacle
+     * @param width the width of the obstacle (must be positive)
+     * @param height the height of the obstacle (must be positive)
+     * @param type the type of obstacle
+     * @throws IllegalArgumentException if parameters are invalid
+     */
     public ObstaclePlacement(Point location, int width, int height, Obstacle type) {
         if (location == null || type == null) {
             throw new IllegalArgumentException("Location and type cannot be null");
@@ -27,10 +36,39 @@ public class ObstaclePlacement {
         this.type = type;
     }
 
+    /**
+     * Gets the unique ID of this obstacle.
+     *
+     * @return the obstacle ID
+     */
     public int getId() { return id; }
+
+    /**
+     * Gets the top-left corner location of this obstacle.
+     *
+     * @return the location Point
+     */
     public Point getLocation() { return location; }
+
+    /**
+     * Gets the width of this obstacle.
+     *
+     * @return the width
+     */
     public int getWidth() { return width; }
+
+    /**
+     * Gets the height of this obstacle.
+     *
+     * @return the height
+     */
     public int getHeight() { return height; }
+
+    /**
+     * Gets the type of obstacle.
+     *
+     * @return the Obstacle type
+     */
     public Obstacle getType() { return type; }
 
     /**
@@ -46,6 +84,9 @@ public class ObstaclePlacement {
 
     // ... existing code ...
 
+    /**
+     * Resets the ID counter to 1. Used for testing and initialization.
+     */
     public static void resetIdCounter() {
         nextId = 1;
     }
