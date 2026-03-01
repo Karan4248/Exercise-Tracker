@@ -1,4 +1,6 @@
-package ca.umanitoba.cs.kanand;
+package ca.umanitoba.cs.kanand.model;
+
+import com.google.common.base.Preconditions;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,10 +18,9 @@ public class Activity {
     }
 
     public void addExerciseLog(ExerciseLog log) {
-        if (log == null) {
-            throw new IllegalArgumentException("Log cannot be null");
-        }
-        logs.add(log);
+        logs.add(Preconditions.checkNotNull(log, "Precondition failed: log must not be null"));
+        Preconditions.checkState(logs.contains(log), "Postcondition failed: logs must contain log");
+        Preconditions.checkState(logs != null, "Invariant violated: logs must not be null");
     }
 
     public boolean removeExerciseLog(int id) {
@@ -36,10 +37,13 @@ public class Activity {
     }
 
     public List<ExerciseLog> getAllLogs() {
+        Preconditions.checkState(logs != null, "Invariant violated: logs must not be null");
         return new ArrayList<>(logs);
     }
 
     public double getTotalDistance(LocalDateTime since) {
+        Preconditions.checkNotNull(since, "Precondition failed: since must not be null");
+
         double total = 0;
         for (ExerciseLog log : logs) {
             if (log.getTimestamp().isAfter(since)) {
@@ -59,5 +63,6 @@ public class Activity {
 
     public void clear() {
         logs.clear();
+        Preconditions.checkState(logs != null, "Invariant violated: logs must not be null");
     }
 }

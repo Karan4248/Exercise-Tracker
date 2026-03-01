@@ -1,4 +1,4 @@
-package ca.umanitoba.cs.kanand;
+package ca.umanitoba.cs.kanand.model;
 
 /**
  * Enumeration of distance units for exercises.

@@ -1,5 +1,7 @@
 package ca.umanitoba.cs.kanand;
 
+import ca.umanitoba.cs.kanand.model.ExerciseTrackerREPL;
+
 import java.util.Scanner;
 
 public class Main {
@@ -10,3 +12,4 @@ public class Main {
         scanner.close();
     }
 }
+

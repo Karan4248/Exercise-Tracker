@@ -1,4 +1,4 @@
-package ca.umanitoba.cs.kanand;
+package ca.umanitoba.cs.kanand.model;
 
 /**
  * Represents an obstacle placed at a specific location on the grid.
@@ -44,11 +44,7 @@ public class ObstaclePlacement {
         return px >= ox && px < ox + width && py >= oy && py < oy + height;
     }
 
-    @Override
-    public String toString() {
-        return String.format("Obstacle #%d: %s at %s, size %dx%d",
-                id, type.getDisplayName(), location, width, height);
-    }
+    // ... existing code ...
 
     public static void resetIdCounter() {
         nextId = 1;

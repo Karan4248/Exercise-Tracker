@@ -1,4 +1,6 @@
-package ca.umanitoba.cs.kanand;
+package ca.umanitoba.cs.kanand.model;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Represents a coordinate point on the grid.
@@ -9,11 +11,13 @@ public class Point {
     private final int y;
 
     public Point(int x, int y) {
-        if (x < 0 || y < 0) {
-            throw new IllegalArgumentException("Coordinates must be non-negative");
-        }
+        Preconditions.checkState(x >= 0, "Invariant failed: x must be >= 0");
+        Preconditions.checkState(y >= 0, "Invariant failed: y must be >= 0");
         this.x = x;
         this.y = y;
+
+        Preconditions.checkState(this.x >= 0 && this.y >= 0,
+                "Invariant violated: coordinates must be non-negative");
     }
 
     public int getX() { return x; }
@@ -32,8 +36,5 @@ public class Point {
         return 31 * x + y;
     }
 
-    @Override
-    public String toString() {
-        return "(" + x + ", " + y + ")";
-    }
+    // ... existing code ...
 }

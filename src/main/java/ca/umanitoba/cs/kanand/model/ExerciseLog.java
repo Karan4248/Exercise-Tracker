@@ -1,4 +1,4 @@
-package ca.umanitoba.cs.kanand;
+package ca.umanitoba.cs.kanand.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,13 +42,6 @@ public class ExerciseLog {
     public Exercise getExercise() { return exercise; }
     public LocalDateTime getTimestamp() { return timestamp; }
     public double getDistance() { return distance; }
-
-    @Override
-    public String toString() {
-        return String.format("Activity #%d: \"%s\" - %s, %.2f %s, %d points, %s",
-                id, name, exercise.getName(), distance, exercise.getUnit().getAbbreviation(),
-                points.size(), timestamp.toLocalDate());
-    }
 
     public static void resetIdCounter() {
         nextId = 1;
