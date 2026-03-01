@@ -120,3 +120,36 @@ Grid --* Point
 Grid --* ObstaclePlacement
 
 ```
+
+## REPL Commands
+
+| Command | Description |
+|---------|-------------|
+| `HELP` | Lists all available commands and input formats |
+| `ADD MAP` | Initialize the map with width and height |
+| `ADD OBSTACLE` | Add a rectangular obstacle to the map |
+| `ADD ACTIVITY` | Track a new activity with a route |
+| `SHOW MAP` | Display the map with all routes and obstacles |
+| `SHOW OBSTACLES` | List all obstacles on the map |
+| `SHOW ACTIVITIES` | List all tracked activities |
+| `SHOW ACTIVITY` | Display map with a single activity's route |
+| `REMOVE ACTIVITY` | Remove an activity by ID |
+| `REMOVE OBSTACLE` | Remove an obstacle by ID |
+| `REMOVE MAP` | Remove the entire map and all data |
+| `QUIT` / `EXIT` | Exit the application |
+
+## Input Formats
+
+- **Coordinates**: Space-separated integers (e.g., `3 5`)
+- **Activities**: Identified by numeric ID
+- **Obstacles**: Identified by numeric ID
+- **Obstacle types**: `TREE`, `BUILDING`, `ROCK`, `WATER`
+- **Units**: `KILOMETERS`, `MILES`, `METERS`, `STEPS`
+
+## Map Symbols
+
+| Symbol | Meaning |
+|--------|---------|
+| `.` | Empty location |
+| `>` | Activity route point |
+| `*` | Obstacle |
