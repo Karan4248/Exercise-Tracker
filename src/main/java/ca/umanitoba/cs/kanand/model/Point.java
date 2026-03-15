@@ -63,16 +63,6 @@ public class Point {
     }
 
     /**
-     * Returns a string representation of this point.
-     *
-     * @return a string in the format (x,y)
-     */
-    @Override
-    public String toString() {
-        return "(" + x + "," + y + ")";
-    }
-
-    /**
      * Checks the class invariant.
      *
      * @return true if the invariant is satisfied, false otherwise

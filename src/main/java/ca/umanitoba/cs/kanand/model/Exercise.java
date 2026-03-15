@@ -40,16 +40,6 @@ public class Exercise {
     public Unit getUnit() { return unit; }
 
     /**
-     * Returns a string representation of this exercise.
-     *
-     * @return a string describing the exercise
-     */
-    @Override
-    public String toString() {
-        return name + " (" + unit + ")";
-    }
-
-    /**
      * Checks the class invariant.
      *
      * @return true if the invariant is satisfied, false otherwise

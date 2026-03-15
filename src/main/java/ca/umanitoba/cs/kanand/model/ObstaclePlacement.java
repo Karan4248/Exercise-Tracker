@@ -65,16 +65,6 @@ public class ObstaclePlacement {
     }
 
     /**
-     * Returns a string representation of this obstacle placement.
-     *
-     * @return a string describing the obstacle
-     */
-    @Override
-    public String toString() {
-        return type + " at " + location;
-    }
-
-    /**
      * Checks the class invariant.
      *
      * @return true if the invariant is satisfied, false otherwise

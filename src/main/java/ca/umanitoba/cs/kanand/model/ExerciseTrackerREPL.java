@@ -104,20 +104,20 @@ public class ExerciseTrackerREPL {
     private void addMap() {
         if (grid != null) {
             System.out.println("A map already exists. Remove it first with REMOVE MAP.");
-        } else {
-            System.out.print("Enter map width: ");
-            int width = Integer.parseInt(scanner.nextLine().trim());
-
-            System.out.print("Enter map height: ");
-            int height = Integer.parseInt(scanner.nextLine().trim());
-
-            grid = new Grid(width, height);
-            ObstaclePlacement.resetIdCounter();
-            ExerciseLog.resetIdCounter();
-            activity.clear();
-
-            System.out.println("Map created! Size: " + width + " x " + height);
+            return;
         }
+        System.out.print("Enter map width: ");
+        int width = Integer.parseInt(scanner.nextLine().trim());
+
+        System.out.print("Enter map height: ");
+        int height = Integer.parseInt(scanner.nextLine().trim());
+
+        grid = new Grid(width, height);
+        ObstaclePlacement.resetIdCounter();
+        ExerciseLog.resetIdCounter();
+        activity.clear();
+
+        System.out.println("Map created! Size: " + width + " x " + height);
     }
 
     /**
@@ -126,28 +126,28 @@ public class ExerciseTrackerREPL {
     private void addObstacle() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
-        } else {
-            System.out.print("Enter obstacle position (x y): ");
-            String[] coords = scanner.nextLine().trim().split("\\s+");
-            int x = Integer.parseInt(coords[0]);
-            int y = Integer.parseInt(coords[1]);
-
-            System.out.println("Obstacle types: TREE, BUILDING, ROCK, WATER");
-            System.out.print("Enter obstacle type: ");
-            String typeStr = scanner.nextLine().trim().toUpperCase();
-            Obstacle type = Obstacle.valueOf(typeStr);
-
-            Point location = new Point(x, y);
-            
-            if (!grid.isInBounds(location)) {
-                System.out.println("Error: Obstacle location (" + location.getX() + "," + location.getY() + ") is out of bounds. "
-                        + "Grid size: " + grid.getWidth() + "x" + grid.getHeight());
-            } else {
-                ObstaclePlacement obstacle = new ObstaclePlacement(location, type);
-                grid.addObstacle(obstacle);
-                System.out.println("Obstacle added: " + ObstaclePlacementPrinter.format(obstacle));
-            }
+            return;
         }
+        System.out.print("Enter obstacle position (x y): ");
+        String[] coords = scanner.nextLine().trim().split("\\s+");
+        int x = Integer.parseInt(coords[0]);
+        int y = Integer.parseInt(coords[1]);
+
+        System.out.println("Obstacle types: TREE, BUILDING, ROCK, WATER");
+        System.out.print("Enter obstacle type: ");
+        String typeStr = scanner.nextLine().trim().toUpperCase();
+        Obstacle type = Obstacle.valueOf(typeStr);
+
+        Point location = new Point(x, y);
+        
+        if (!grid.isInBounds(location)) {
+            System.out.println("Error: Obstacle location (" + location.getX() + "," + location.getY() + ") is out of bounds. "
+                    + "Grid size: " + grid.getWidth() + "x" + grid.getHeight());
+            return;
+        }
+        ObstaclePlacement obstacle = new ObstaclePlacement(location, type);
+        grid.addObstacle(obstacle);
+        System.out.println("Obstacle added: " + ObstaclePlacementPrinter.format(obstacle));
     }
 
     /**
@@ -156,51 +156,51 @@ public class ExerciseTrackerREPL {
     private void addActivity() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
-        } else {
-            System.out.print("Enter activity name: ");
-            String name = scanner.nextLine().trim();
+            return;
+        }
+        System.out.print("Enter activity name: ");
+        String name = scanner.nextLine().trim();
 
-            System.out.print("Enter exercise type (e.g., Running, Cycling): ");
-            String exerciseType = scanner.nextLine().trim();
+        System.out.print("Enter exercise type (e.g., Running, Cycling): ");
+        String exerciseType = scanner.nextLine().trim();
 
-            System.out.println("Available units: KILOMETERS, MILES, METERS, STEPS");
-            System.out.print("Enter unit: ");
-            String unitStr = scanner.nextLine().trim().toUpperCase();
-            Unit unit = Unit.valueOf(unitStr);
+        System.out.println("Available units: KILOMETERS, MILES, METERS, STEPS");
+        System.out.print("Enter unit: ");
+        String unitStr = scanner.nextLine().trim().toUpperCase();
+        Unit unit = Unit.valueOf(unitStr);
 
-            System.out.print("Enter distance covered: ");
-            double distance = Double.parseDouble(scanner.nextLine().trim());
+        System.out.print("Enter distance covered: ");
+        double distance = Double.parseDouble(scanner.nextLine().trim());
 
-            System.out.print("Enter number of route points: ");
-            int numPoints = Integer.parseInt(scanner.nextLine().trim());
+        System.out.print("Enter number of route points: ");
+        int numPoints = Integer.parseInt(scanner.nextLine().trim());
 
-            if (numPoints < 1) {
-                System.out.println("Activity must have at least one route point.");
+        if (numPoints < 1) {
+            System.out.println("Activity must have at least one route point.");
+            return;
+        }
+        List<Point> route = new ArrayList<>();
+        
+        for (int i = 0; i < numPoints; i++) {
+            System.out.print("Enter point " + (i + 1) + " (x y): ");
+            String[] coordsArr = scanner.nextLine().trim().split("\\s+");
+            int px = Integer.parseInt(coordsArr[0]);
+            int py = Integer.parseInt(coordsArr[1]);
+            Point point = new Point(px, py);
+
+            if (!grid.isInBounds(point)) {
+                System.out.println("Point is outside map bounds. Try again.");
+                i--;
             } else {
-                List<Point> route = new ArrayList<>();
-                
-                for (int i = 0; i < numPoints; i++) {
-                    System.out.print("Enter point " + (i + 1) + " (x y): ");
-                    String[] coordsArr = scanner.nextLine().trim().split("\\s+");
-                    int px = Integer.parseInt(coordsArr[0]);
-                    int py = Integer.parseInt(coordsArr[1]);
-                    Point point = new Point(px, py);
-
-                    if (!grid.isInBounds(point)) {
-                        System.out.println("Point is outside map bounds. Try again.");
-                        i--;
-                    } else {
-                        route.add(point);
-                    }
-                }
-
-                if (!route.isEmpty()) {
-                    Exercise exercise = new Exercise(exerciseType, unit);
-                    ExerciseLog log = new ExerciseLog(name, exercise, route, distance);
-                    activity.addExerciseLog(log);
-                    System.out.println("Activity added: " + ExerciseLogPrinter.format(log));
-                }
+                route.add(point);
             }
+        }
+
+        if (!route.isEmpty()) {
+            Exercise exercise = new Exercise(exerciseType, unit);
+            ExerciseLog log = new ExerciseLog(name, exercise, route, distance);
+            activity.addExerciseLog(log);
+            System.out.println("Activity added: " + ExerciseLogPrinter.format(log));
         }
     }
 
@@ -210,11 +210,11 @@ public class ExerciseTrackerREPL {
     private void showMap() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
-        } else {
-            printMapGrid(null);
-            printLegend();
-            printActivitySummary();
+            return;
         }
+        printMapGrid(null);
+        printLegend();
+        printActivitySummary();
     }
 
     /**
@@ -223,26 +223,28 @@ public class ExerciseTrackerREPL {
     private void showActivity() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
-        } else if (activity.getAllLogs().isEmpty()) {
-            System.out.println("No activities recorded yet.");
-        } else {
-            System.out.println("Available activities:");
-            for (ExerciseLog log : activity.getAllLogs()) {
-                System.out.println("  " + log.getId() + ": " + log.getName());
-            }
-
-            System.out.print("Enter activity ID to display: ");
-            int id = Integer.parseInt(scanner.nextLine().trim());
-
-            ExerciseLog selectedLog = activity.getExerciseLog(id);
-            if (selectedLog == null) {
-                System.out.println("Activity not found with ID: " + id);
-            } else {
-                printMapGrid(selectedLog);
-                System.out.println("\nShowing activity: " + ExerciseLogPrinter.format(selectedLog));
-                printLegend();
-            }
+            return;
         }
+        if (activity.getAllLogs().isEmpty()) {
+            System.out.println("No activities recorded yet.");
+            return;
+        }
+        System.out.println("Available activities:");
+        for (ExerciseLog log : activity.getAllLogs()) {
+            System.out.println("  " + log.getId() + ": " + log.getName());
+        }
+
+        System.out.print("Enter activity ID to display: ");
+        int id = Integer.parseInt(scanner.nextLine().trim());
+
+        ExerciseLog selectedLog = activity.getExerciseLog(id);
+        if (selectedLog == null) {
+            System.out.println("Activity not found with ID: " + id);
+            return;
+        }
+        printMapGrid(selectedLog);
+        System.out.println("\nShowing activity: " + ExerciseLogPrinter.format(selectedLog));
+        printLegend();
     }
 
     /**
@@ -332,20 +334,20 @@ public class ExerciseTrackerREPL {
     private void showObstacles() {
         if (grid == null) {
             System.out.println("No map exists. Create one first with ADD MAP.");
-        } else {
-            List<ObstaclePlacement> obstacles = grid.getObstacles();
-            if (obstacles.isEmpty()) {
-                System.out.println("No obstacles on the map.");
-            } else {
-                System.out.println("\n═══════════════════════════════════════");
-                System.out.println("              OBSTACLES                 ");
-                System.out.println("═══════════════════════════════════════");
-                for (ObstaclePlacement obs : obstacles) {
-                    System.out.println("  " + ObstaclePlacementPrinter.format(obs));
-                }
-                System.out.println("═══════════════════════════════════════\n");
-            }
+            return;
         }
+        List<ObstaclePlacement> obstacles = grid.getObstacles();
+        if (obstacles.isEmpty()) {
+            System.out.println("No obstacles on the map.");
+            return;
+        }
+        System.out.println("\n═══════════════════════════════════════");
+        System.out.println("              OBSTACLES                 ");
+        System.out.println("═══════════════════════════════════════");
+        for (ObstaclePlacement obs : obstacles) {
+            System.out.println("  " + ObstaclePlacementPrinter.format(obs));
+        }
+        System.out.println("═══════════════════════════════════════\n");
     }
 
     /**
@@ -355,15 +357,15 @@ public class ExerciseTrackerREPL {
         List<ExerciseLog> logs = activity.getAllLogs();
         if (logs.isEmpty()) {
             System.out.println("No activities recorded yet.");
-        } else {
-            System.out.println("\n═══════════════════════════════════════════════════════════════");
-            System.out.println("                        ACTIVITIES                              ");
-            System.out.println("═══════════════════════════════════════════════════════════════");
-            for (ExerciseLog log : logs) {
-                System.out.println("  " + ExerciseLogPrinter.format(log));
-            }
-            System.out.println("═══════════════════════════════════════════════════════════════\n");
+            return;
         }
+        System.out.println("\n═══════════════════════════════════════════════════════════════");
+        System.out.println("                        ACTIVITIES                              ");
+        System.out.println("═══════════════════════════════════════════════════════════════");
+        for (ExerciseLog log : logs) {
+            System.out.println("  " + ExerciseLogPrinter.format(log));
+        }
+        System.out.println("═══════════════════════════════════════════════════════════════\n");
     }
 
     /**
@@ -373,20 +375,20 @@ public class ExerciseTrackerREPL {
         List<ExerciseLog> logs = activity.getAllLogs();
         if (logs.isEmpty()) {
             System.out.println("No activities to remove.");
+            return;
+        }
+        System.out.println("Current activities:");
+        for (ExerciseLog log : logs) {
+            System.out.println("  " + log.getId() + ": " + log.getName());
+        }
+
+        System.out.print("Enter activity ID to remove: ");
+        int id = Integer.parseInt(scanner.nextLine().trim());
+
+        if (activity.removeExerciseLog(id)) {
+            System.out.println("Activity removed successfully.");
         } else {
-            System.out.println("Current activities:");
-            for (ExerciseLog log : logs) {
-                System.out.println("  " + log.getId() + ": " + log.getName());
-            }
-
-            System.out.print("Enter activity ID to remove: ");
-            int id = Integer.parseInt(scanner.nextLine().trim());
-
-            if (activity.removeExerciseLog(id)) {
-                System.out.println("Activity removed successfully.");
-            } else {
-                System.out.println("Activity not found with ID: " + id);
-            }
+            System.out.println("Activity not found with ID: " + id);
         }
     }
 
@@ -396,25 +398,25 @@ public class ExerciseTrackerREPL {
     private void removeObstacle() {
         if (grid == null) {
             System.out.println("No map exists.");
+            return;
+        }
+        List<ObstaclePlacement> obstacles = grid.getObstacles();
+        if (obstacles.isEmpty()) {
+            System.out.println("No obstacles to remove.");
+            return;
+        }
+        System.out.println("Current obstacles:");
+        for (ObstaclePlacement obs : obstacles) {
+            System.out.println("  ID: " + obs.getId() + ", " + obs);
+        }
+
+        System.out.print("Enter obstacle ID to remove: ");
+        int id = Integer.parseInt(scanner.nextLine().trim());
+
+        if (grid.removeObstacle(id)) {
+            System.out.println("Obstacle removed successfully.");
         } else {
-            List<ObstaclePlacement> obstacles = grid.getObstacles();
-            if (obstacles.isEmpty()) {
-                System.out.println("No obstacles to remove.");
-            } else {
-                System.out.println("Current obstacles:");
-                for (ObstaclePlacement obs : obstacles) {
-                    System.out.println("  ID: " + obs.getId() + ", " + obs);
-                }
-
-                System.out.print("Enter obstacle ID to remove: ");
-                int id = Integer.parseInt(scanner.nextLine().trim());
-
-                if (grid.removeObstacle(id)) {
-                    System.out.println("Obstacle removed successfully.");
-                } else {
-                    System.out.println("Obstacle not found with ID: " + id);
-                }
-            }
+            System.out.println("Obstacle not found with ID: " + id);
         }
     }
 
@@ -424,13 +426,13 @@ public class ExerciseTrackerREPL {
     private void removeMap() {
         if (grid == null) {
             System.out.println("No map exists.");
-        } else {
-            grid = null;
-            activity.clear();
-            ObstaclePlacement.resetIdCounter();
-            ExerciseLog.resetIdCounter();
-            System.out.println("Map and all associated data removed.");
+            return;
         }
+        grid = null;
+        activity.clear();
+        ObstaclePlacement.resetIdCounter();
+        ExerciseLog.resetIdCounter();
+        System.out.println("Map and all associated data removed.");
     }
 
     /**

@@ -57,10 +57,16 @@ classDiagram
     +getAllLogs() List~ExerciseLog~
     +getTotalDistance(LocalDateTime since) double
     +getLifetimeDistance() double
+    +clear() void
   }
-  note for Activity "Manages all exercise activities
-    Invariants:
-    • logs != null"
+  note for Activity "Preconditions:
+    * addExerciseLog: log != null
+    * getTotalDistance: since != null
+    Postconditions:
+    * addExerciseLog: logs contains log
+    * removeExerciseLog: log removed if found
+    Class Invariants:
+    * logs != null"
 
   class ExerciseLog {
     -int id
@@ -73,13 +79,23 @@ classDiagram
     +getName() String
     +getPoints() List~Point~
     +getExercise() Exercise
+    +getTimestamp() LocalDateTime
+    +getDistance() double
+    +resetIdCounter() void
   }
-  note for ExerciseLog "Single activity entry with route
-    Invariants:
-    • name != null && !empty
-    • points != null && !empty
-    • exercise != null
-    • id > 0"
+  note for ExerciseLog "Preconditions (constructor):
+    * name != null && !empty
+    * exercise != null
+    * route != null && !empty
+    Postconditions (constructor):
+    * id assigned, id > 0
+    * points contains route elements
+    * timestamp set to now
+    Class Invariants:
+    * name != null && !empty
+    * points != null && !empty
+    * exercise != null
+    * id > 0"
 
   class Exercise {
     -String name
@@ -87,37 +103,52 @@ classDiagram
     +getName() String
     +getUnit() Unit
   }
-  note for Exercise "Exercise type with measurement unit
-    Invariants:
-    • name != null && !empty
-    • unit != null"
+  note for Exercise "Preconditions (constructor):
+    * name != null && !empty
+    * unit != null
+    Class Invariants:
+    * name != null && !empty
+    * unit != null"
 
   class Grid {
     -int width
     -int height
     -List~ObstaclePlacement~ obstacles
+    +getWidth() int
+    +getHeight() int
     +isInBounds(Point p) boolean
     +isValid(Point p) boolean
     +addObstacle(ObstaclePlacement o) void
-    +removeObstacle(int id) void
+    +removeObstacle(int id) boolean
     +getObstacles() List~ObstaclePlacement~
+    +getObstacleAt(Point p) ObstaclePlacement
   }
-  note for Grid "Map grid with obstacle management
-    Invariants:
-    • width > 0
-    • height > 0
-    • obstacles != null"
+  note for Grid "Preconditions (constructor):
+    * width > 0 && height > 0
+    Preconditions (methods):
+    * isInBounds: p != null
+    * isValid: p != null
+    * addObstacle: o != null, location in bounds
+    Postconditions:
+    * addObstacle: obstacles contains o
+    Class Invariants:
+    * width > 0
+    * height > 0
+    * obstacles != null"
 
   class Point {
     -int x
     -int y
     +getX() int
     +getY() int
+    +equals(Object obj) boolean
+    +hashCode() int
   }
-  note for Point "Grid coordinate
-    Invariants:
-    • x >= 0
-    • y >= 0"
+  note for Point "Preconditions (constructor):
+    * x >= 0 && y >= 0
+    Class Invariants:
+    * x >= 0
+    * y >= 0"
 
   class ObstaclePlacement {
     -int id
@@ -126,12 +157,20 @@ classDiagram
     +getId() int
     +getLocation() Point
     +getType() Obstacle
+    +occupies(Point p) boolean
+    +resetIdCounter() void
   }
-  note for ObstaclePlacement "Obstacle at specific location
-    Invariants:
-    • location != null
-    • type != null
-    • id > 0"
+  note for ObstaclePlacement "Preconditions (constructor):
+    * location != null
+    * type != null
+    Preconditions (methods):
+    * occupies: p != null
+    Postconditions (constructor):
+    * id assigned, id > 0
+    Class Invariants:
+    * location != null
+    * type != null
+    * id > 0"
 
   class Obstacle {
     <<enumeration>>
@@ -140,7 +179,6 @@ classDiagram
     ROCK
     WATER
   }
-  note for Obstacle "Obstacle type constants"
 
   class Unit {
     <<enumeration>>
@@ -149,13 +187,12 @@ classDiagram
     METERS
     STEPS
   }
-  note for Unit "Distance measurement units"
 
-  Activity --> "*" ExerciseLog : contains
-  ExerciseLog --> "1" Exercise : has
-  ExerciseLog --> "*" Point : route
-  Grid --> "*" ObstaclePlacement : has
-  ObstaclePlacement --> "1" Obstacle : type
-  ObstaclePlacement --> "1" Point : location
-  Exercise --> "1" Unit : unit
+  Activity --* ExerciseLog
+  ExerciseLog --* Exercise
+  ExerciseLog --* Point
+  Grid --* ObstaclePlacement
+  ObstaclePlacement --* Obstacle
+  Exercise --* Unit
+  ObstaclePlacement --* Point
 ```

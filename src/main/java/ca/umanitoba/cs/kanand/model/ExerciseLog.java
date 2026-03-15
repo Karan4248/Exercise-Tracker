@@ -89,16 +89,6 @@ public class ExerciseLog {
     public double getDistance() { return distance; }
 
     /**
-     * Returns a string representation of this exercise log.
-     *
-     * @return a string describing the exercise log
-     */
-    @Override
-    public String toString() {
-        return name + " - " + exercise.getName() + " (" + distance + " " + exercise.getUnit() + ")";
-    }
-
-    /**
      * Checks the class invariant.
      *
      * @return true if the invariant is satisfied, false otherwise
