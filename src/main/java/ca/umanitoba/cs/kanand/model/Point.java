@@ -17,13 +17,11 @@ public class Point {
      * @param y the Y coordinate (must be non-negative)
      */
     public Point(int x, int y) {
-        Preconditions.checkState(x >= 0, "Invariant failed: x must be >= 0");
-        Preconditions.checkState(y >= 0, "Invariant failed: y must be >= 0");
+        Preconditions.checkState(x >= 0, "Precondition failed: x must be >= 0");
+        Preconditions.checkState(y >= 0, "Precondition failed: y must be >= 0");
         this.x = x;
         this.y = y;
-
-        Preconditions.checkState(this.x >= 0 && this.y >= 0,
-                "Invariant violated: coordinates must be non-negative");
+        Preconditions.checkState(checkInvariant(), "Invariant violated");
     }
 
     /**
@@ -64,5 +62,22 @@ public class Point {
         return 31 * x + y;
     }
 
-    // ... existing code ...
+    /**
+     * Returns a string representation of this point.
+     *
+     * @return a string in the format (x,y)
+     */
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
+
+    /**
+     * Checks the class invariant.
+     *
+     * @return true if the invariant is satisfied, false otherwise
+     */
+    private boolean checkInvariant() {
+        return x >= 0 && y >= 0;
+    }
 }

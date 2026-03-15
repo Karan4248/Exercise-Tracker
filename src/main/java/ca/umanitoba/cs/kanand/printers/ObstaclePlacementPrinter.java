@@ -17,12 +17,10 @@ public final class ObstaclePlacementPrinter {
     public static String format(ObstaclePlacement obstacle) {
         if (obstacle == null) return "<null obstacle>";
         return String.format(
-                "Obstacle #%d: %s at %s, size %dx%d",
+                "Obstacle #%d: %s at %s",
                 obstacle.getId(),
-                obstacle.getType().getDisplayName(),
-                PointPrinter.format(obstacle.getLocation()),
-                obstacle.getWidth(),
-                obstacle.getHeight()
+                obstacle.getType(),
+                PointPrinter.format(obstacle.getLocation())
         );
     }
 }

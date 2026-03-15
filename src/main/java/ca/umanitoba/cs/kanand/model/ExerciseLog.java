@@ -1,12 +1,13 @@
 package ca.umanitoba.cs.kanand.model;
 
+import com.google.common.base.Preconditions;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a single exercise activity with a route on the grid.
- * Invariant: points != null, exercise != null, id > 0
+ * Invariant: points != null, exercise != null, id > 0, name != null
  */
 public class ExerciseLog {
     private static int nextId = 1;
@@ -25,24 +26,24 @@ public class ExerciseLog {
      * @param exercise the Exercise type
      * @param route the list of route points (non-empty)
      * @param distance the total distance covered
-     * @throws IllegalArgumentException if any parameter is invalid
+     * @throws NullPointerException if name, exercise, or route is null
+     * @throws IllegalStateException if name or route is empty
      */
     public ExerciseLog(String name, Exercise exercise, List<Point> route, double distance) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Activity name cannot be null or empty");
-        }
-        if (exercise == null) {
-            throw new IllegalArgumentException("Exercise cannot be null");
-        }
-        if (route == null || route.isEmpty()) {
-            throw new IllegalArgumentException("Route cannot be null or empty");
-        }
+        this.name = Preconditions.checkNotNull(name, "Precondition failed: name cannot be null");
+        Preconditions.checkState(!this.name.isEmpty(), "Precondition failed: name cannot be empty");
+        
+        this.exercise = Preconditions.checkNotNull(exercise, "Precondition failed: exercise cannot be null");
+        
+        Preconditions.checkNotNull(route, "Precondition failed: route cannot be null");
+        Preconditions.checkState(!route.isEmpty(), "Precondition failed: route cannot be empty");
+        
         this.id = nextId++;
-        this.name = name;
-        this.exercise = exercise;
         this.points = new ArrayList<>(route);
         this.timestamp = LocalDateTime.now();
         this.distance = distance;
+        
+        Preconditions.checkState(checkInvariant(), "Invariant violated: required fields cannot be null");
     }
 
     /**
@@ -51,6 +52,7 @@ public class ExerciseLog {
      * @return the exercise log ID
      */
     public int getId() { return id; }
+    
     /**
      * Gets the name of the activity.
      *
@@ -87,9 +89,32 @@ public class ExerciseLog {
     public double getDistance() { return distance; }
 
     /**
+     * Returns a string representation of this exercise log.
+     *
+     * @return a string describing the exercise log
+     */
+    @Override
+    public String toString() {
+        return name + " - " + exercise.getName() + " (" + distance + " " + exercise.getUnit() + ")";
+    }
+
+    /**
+     * Checks the class invariant.
+     *
+     * @return true if the invariant is satisfied, false otherwise
+     */
+    private boolean checkInvariant() {
+        return name != null && !name.isEmpty() && 
+               exercise != null && 
+               points != null && !points.isEmpty() && 
+               id > 0;
+    }
+
+    /**
      * Resets the ID counter to 1. Used for testing and initialization.
      */
     public static void resetIdCounter() {
         nextId = 1;
     }
 }
+

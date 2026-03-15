@@ -26,7 +26,7 @@ public final class ExerciseLogPrinter {
                 log.getName(),
                 log.getExercise().getName(),
                 log.getDistance(),
-                log.getExercise().getUnit().getAbbreviation(),
+                log.getExercise().getUnit(),
                 log.getPoints().size(),
                 log.getTimestamp().toLocalDate().format(DATE)
         );

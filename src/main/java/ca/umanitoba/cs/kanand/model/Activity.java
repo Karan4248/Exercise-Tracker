@@ -18,6 +18,7 @@ public class Activity {
      */
     public Activity() {
         this.logs = new ArrayList<>();
+        Preconditions.checkState(checkInvariant(), "Invariant violated: logs must not be null");
     }
 
     /**
@@ -27,9 +28,10 @@ public class Activity {
      * @throws NullPointerException if log is null
      */
     public void addExerciseLog(ExerciseLog log) {
-        logs.add(Preconditions.checkNotNull(log, "Precondition failed: log must not be null"));
+        Preconditions.checkNotNull(log, "Precondition failed: log must not be null");
+        logs.add(log);
         Preconditions.checkState(logs.contains(log), "Postcondition failed: logs must contain log");
-        Preconditions.checkState(logs != null, "Invariant violated: logs must not be null");
+        Preconditions.checkState(checkInvariant(), "Invariant violated: logs must not be null");
     }
 
     /**
@@ -39,7 +41,9 @@ public class Activity {
      * @return true if a log was removed, false otherwise
      */
     public boolean removeExerciseLog(int id) {
-        return logs.removeIf(log -> log.getId() == id);
+        boolean removed = logs.removeIf(log -> log.getId() == id);
+        Preconditions.checkState(checkInvariant(), "Invariant violated: logs must not be null");
+        return removed;
     }
 
     /**
@@ -63,7 +67,7 @@ public class Activity {
      * @return a copy of all ExerciseLogs
      */
     public List<ExerciseLog> getAllLogs() {
-        Preconditions.checkState(logs != null, "Invariant violated: logs must not be null");
+        Preconditions.checkState(checkInvariant(), "Invariant violated: logs must not be null");
         return new ArrayList<>(logs);
     }
 
@@ -104,6 +108,16 @@ public class Activity {
      */
     public void clear() {
         logs.clear();
-        Preconditions.checkState(logs != null, "Invariant violated: logs must not be null");
+        Preconditions.checkState(checkInvariant(), "Invariant violated: logs must not be null");
+    }
+
+    /**
+     * Checks the class invariant.
+     *
+     * @return true if the invariant is satisfied, false otherwise
+     */
+    private boolean checkInvariant() {
+        return logs != null;
     }
 }
+

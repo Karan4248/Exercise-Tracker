@@ -52,56 +52,86 @@ classDiagram
   class Activity {
     -List~ExerciseLog~ logs
     +addExerciseLog(ExerciseLog log) void
+    +removeExerciseLog(int id) boolean
+    +getExerciseLog(int id) ExerciseLog
+    +getAllLogs() List~ExerciseLog~
+    +getTotalDistance(LocalDateTime since) double
+    +getLifetimeDistance() double
   }
-  note for Activity "Class invariants:
-    * logs != null"
+  note for Activity "Manages all exercise activities
+    Invariants:
+    • logs != null"
 
   class ExerciseLog {
+    -int id
+    -String name
     -List~Point~ points
-    -Grid grid
     -Exercise exercise
-    +addPoint(Point point) void
+    -LocalDateTime timestamp
+    -double distance
+    +getId() int
+    +getName() String
+    +getPoints() List~Point~
+    +getExercise() Exercise
   }
-  note for ExerciseLog "Class invariants:
-    * points != null
-    * grid != null
-    * exercise != null"
+  note for ExerciseLog "Single activity entry with route
+    Invariants:
+    • name != null && !empty
+    • points != null && !empty
+    • exercise != null
+    • id > 0"
 
   class Exercise {
     -String name
     -Unit unit
+    +getName() String
+    +getUnit() Unit
   }
-  note for Exercise "Class invariants:
-    * name != null
-    * name.length > 0
-    * unit != null"
+  note for Exercise "Exercise type with measurement unit
+    Invariants:
+    • name != null && !empty
+    • unit != null"
 
   class Grid {
     -int width
     -int height
     -List~ObstaclePlacement~ obstacles
-    +isValid(Point point) boolean
+    +isInBounds(Point p) boolean
+    +isValid(Point p) boolean
+    +addObstacle(ObstaclePlacement o) void
+    +removeObstacle(int id) void
+    +getObstacles() List~ObstaclePlacement~
   }
-  note for Grid "Class invariants:
-    * width > 0
-    * height > 0
-    * obstacles != null"
+  note for Grid "Map grid with obstacle management
+    Invariants:
+    • width > 0
+    • height > 0
+    • obstacles != null"
 
   class Point {
     -int x
     -int y
+    +getX() int
+    +getY() int
   }
-  note for Point "Class invariants:
-    * x >= 0
-    * y >= 0"
+  note for Point "Grid coordinate
+    Invariants:
+    • x >= 0
+    • y >= 0"
 
   class ObstaclePlacement {
+    -int id
     -Point location
     -Obstacle type
+    +getId() int
+    +getLocation() Point
+    +getType() Obstacle
   }
-  note for ObstaclePlacement "Class invariants:
-    * location != null
-    * type != null"
+  note for ObstaclePlacement "Obstacle at specific location
+    Invariants:
+    • location != null
+    • type != null
+    • id > 0"
 
   class Obstacle {
     <<enumeration>>
@@ -110,6 +140,7 @@ classDiagram
     ROCK
     WATER
   }
+  note for Obstacle "Obstacle type constants"
 
   class Unit {
     <<enumeration>>
@@ -118,12 +149,13 @@ classDiagram
     METERS
     STEPS
   }
+  note for Unit "Distance measurement units"
 
-  Activity --* ExerciseLog
-  ExerciseLog --o Exercise
-  ExerciseLog --* Grid
-  ExerciseLog --* Point
-  Grid --* ObstaclePlacement
-  ObstaclePlacement -- Obstacle
-  Exercise -- Unit
+  Activity --> "*" ExerciseLog : contains
+  ExerciseLog --> "1" Exercise : has
+  ExerciseLog --> "*" Point : route
+  Grid --> "*" ObstaclePlacement : has
+  ObstaclePlacement --> "1" Obstacle : type
+  ObstaclePlacement --> "1" Point : location
+  Exercise --> "1" Unit : unit
 ```

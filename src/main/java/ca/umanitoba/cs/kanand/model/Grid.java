@@ -1,5 +1,6 @@
 package ca.umanitoba.cs.kanand.model;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,16 +18,17 @@ public class Grid {
      *
      * @param width the grid width (must be positive)
      * @param height the grid height (must be positive)
+     * @throws IllegalArgumentException if width or height is not positive
      */
     public Grid(int width, int height) {
-        assert width > 0 : "Precondition failed: width must be positive";
-        assert height > 0 : "Precondition failed: height must be positive";
+        Preconditions.checkArgument(width > 0, "Precondition failed: width must be positive");
+        Preconditions.checkArgument(height > 0, "Precondition failed: height must be positive");
 
         this.width = width;
         this.height = height;
         this.obstacles = new ArrayList<>();
 
-        assert checkInvariant() : "Invariant violated";
+        Preconditions.checkState(checkInvariant(), "Invariant violated");
     }
 
     /**
@@ -57,12 +59,13 @@ public class Grid {
      *
      * @param point the Point to check
      * @return true if the point is valid, false otherwise
+     * @throws NullPointerException if point is null
      */
     public boolean isValid(Point point) {
-        assert point != null : "Precondition failed: point cannot be null";
+        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
 
-        if (point.getX() < 0 || point.getX() >= width ||
-            point.getY() < 0 || point.getY() >= height) {
+        if (point.getX() < 0 || point.getX() > width ||
+            point.getY() < 0 || point.getY() > height) {
             return false;
         }
         for (ObstaclePlacement obs : obstacles) {
@@ -78,26 +81,33 @@ public class Grid {
      *
      * @param point the Point to check
      * @return true if the point is in bounds, false otherwise
+     * @throws NullPointerException if point is null
      */
     public boolean isInBounds(Point point) {
-        assert point != null : "Precondition failed: point cannot be null";
+        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
 
-        return point.getX() >= 0 && point.getX() < width &&
-               point.getY() >= 0 && point.getY() < height;
+        return point.getX() >= 0 && point.getX() <= width &&
+               point.getY() >= 0 && point.getY() <= height;
     }
 
     /**
      * Adds an obstacle to the grid.
      *
      * @param obstacle the ObstaclePlacement to add
+     * @throws NullPointerException if obstacle is null
+     * @throws IllegalArgumentException if the obstacle location is out of bounds
      */
     public void addObstacle(ObstaclePlacement obstacle) {
-        assert obstacle != null : "Precondition failed: obstacle cannot be null";
+        Preconditions.checkNotNull(obstacle, "Precondition failed: obstacle cannot be null");
+        
+        Point location = obstacle.getLocation();
+        Preconditions.checkArgument(isInBounds(location), 
+            "Precondition failed: obstacle location must be within grid bounds");
 
         obstacles.add(obstacle);
 
-        assert obstacles.contains(obstacle) : "Postcondition failed: obstacle not added";
-        assert checkInvariant() : "Invariant violated";
+        Preconditions.checkState(obstacles.contains(obstacle), "Postcondition failed: obstacle not added");
+        Preconditions.checkState(checkInvariant(), "Invariant violated");
     }
 
     /**
@@ -109,7 +119,7 @@ public class Grid {
     public boolean removeObstacle(int id) {
         boolean removed = obstacles.removeIf(obs -> obs.getId() == id);
 
-        assert checkInvariant() : "Invariant violated";
+        Preconditions.checkState(checkInvariant(), "Invariant violated");
         return removed;
     }
 
@@ -118,9 +128,10 @@ public class Grid {
      *
      * @param point the Point to check
      * @return the ObstaclePlacement at that point, or null if none
+     * @throws NullPointerException if point is null
      */
     public ObstaclePlacement getObstacleAt(Point point) {
-        assert point != null : "Precondition failed: point cannot be null";
+        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
 
         for (ObstaclePlacement obs : obstacles) {
             if (obs.occupies(point)) {

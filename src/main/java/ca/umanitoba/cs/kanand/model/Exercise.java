@@ -19,12 +19,10 @@ public class Exercise {
      * @throws IllegalStateException if name is empty
      */
     public Exercise(String name, Unit unit) {
-        this.name = Preconditions.checkNotNull(name, "Invariant failed: name must not be null");
-        Preconditions.checkState(!this.name.isEmpty(), "Invariant failed: name length must be > 0");
-        this.unit = Preconditions.checkNotNull(unit, "Invariant failed: unit must not be null");
-
-        Preconditions.checkState(this.name != null && !this.name.isEmpty(), "Invariant violated: name");
-        Preconditions.checkState(this.unit != null, "Invariant violated: unit");
+        this.name = Preconditions.checkNotNull(name, "Precondition failed: name cannot be null");
+        this.unit = Preconditions.checkNotNull(unit, "Precondition failed: unit cannot be null");
+        Preconditions.checkState(!this.name.isEmpty(), "Precondition failed: name cannot be empty");
+        Preconditions.checkState(checkInvariant(), "Invariant violated");
     }
 
     /**
@@ -41,5 +39,22 @@ public class Exercise {
      */
     public Unit getUnit() { return unit; }
 
-    // ... existing code ...
+    /**
+     * Returns a string representation of this exercise.
+     *
+     * @return a string describing the exercise
+     */
+    @Override
+    public String toString() {
+        return name + " (" + unit + ")";
+    }
+
+    /**
+     * Checks the class invariant.
+     *
+     * @return true if the invariant is satisfied, false otherwise
+     */
+    private boolean checkInvariant() {
+        return name != null && !name.isEmpty() && unit != null;
+    }
 }

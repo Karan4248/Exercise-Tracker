@@ -1,39 +1,33 @@
 package ca.umanitoba.cs.kanand.model;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Represents an obstacle placed at a specific location on the grid.
- * Invariant: location != null, type != null, width > 0, height > 0
+ * Invariant: location != null, type != null
+ * Precondition: The obstacle location must be within the grid bounds (0 <= x < gridWidth, 0 <= y < gridHeight)
  */
 public class ObstaclePlacement {
     private static int nextId = 1;
 
     private final int id;
-    private final Point location; // top-left corner
-    private final int width;
-    private final int height;
+    private final Point location;
     private final Obstacle type;
 
     /**
-     * Creates an obstacle placement with a unique ID.
+     * Creates an obstacle placement at a specific point.
      *
-     * @param location the top-left corner of the obstacle
-     * @param width the width of the obstacle (must be positive)
-     * @param height the height of the obstacle (must be positive)
+     * @param location the point where the obstacle is placed
      * @param type the type of obstacle
-     * @throws IllegalArgumentException if parameters are invalid
+     * @throws NullPointerException if location or type is null
      */
-    public ObstaclePlacement(Point location, int width, int height, Obstacle type) {
-        if (location == null || type == null) {
-            throw new IllegalArgumentException("Location and type cannot be null");
-        }
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Width and height must be positive");
-        }
+    public ObstaclePlacement(Point location, Obstacle type) {
+        this.location = Preconditions.checkNotNull(location, "Precondition failed: location cannot be null");
+        this.type = Preconditions.checkNotNull(type, "Precondition failed: type cannot be null");
+        
         this.id = nextId++;
-        this.location = location;
-        this.width = width;
-        this.height = height;
-        this.type = type;
+        
+        Preconditions.checkState(checkInvariant(), "Invariant violated: location and type cannot be null");
     }
 
     /**
@@ -44,25 +38,11 @@ public class ObstaclePlacement {
     public int getId() { return id; }
 
     /**
-     * Gets the top-left corner location of this obstacle.
+     * Gets the location of this obstacle.
      *
      * @return the location Point
      */
     public Point getLocation() { return location; }
-
-    /**
-     * Gets the width of this obstacle.
-     *
-     * @return the width
-     */
-    public int getWidth() { return width; }
-
-    /**
-     * Gets the height of this obstacle.
-     *
-     * @return the height
-     */
-    public int getHeight() { return height; }
 
     /**
      * Gets the type of obstacle.
@@ -73,16 +53,35 @@ public class ObstaclePlacement {
 
     /**
      * Checks if this obstacle occupies the given point.
+     *
+     * @param point the point to check
+     * @return true if the obstacle is at this exact point, false otherwise
+     * @throws NullPointerException if point is null
      */
     public boolean occupies(Point point) {
-        int px = point.getX();
-        int py = point.getY();
-        int ox = location.getX();
-        int oy = location.getY();
-        return px >= ox && px < ox + width && py >= oy && py < oy + height;
+        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
+        
+        return point.getX() == location.getX() && point.getY() == location.getY();
     }
 
-    // ... existing code ...
+    /**
+     * Returns a string representation of this obstacle placement.
+     *
+     * @return a string describing the obstacle
+     */
+    @Override
+    public String toString() {
+        return type + " at " + location;
+    }
+
+    /**
+     * Checks the class invariant.
+     *
+     * @return true if the invariant is satisfied, false otherwise
+     */
+    private boolean checkInvariant() {
+        return location != null && type != null;
+    }
 
     /**
      * Resets the ID counter to 1. Used for testing and initialization.

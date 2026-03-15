@@ -12,10 +12,10 @@ public final class ExercisePrinter {
      * Formats an Exercise into a readable string representation.
      *
      * @param exercise the Exercise to format
-     * @return a formatted string with exercise name and unit abbreviation
+     * @return a formatted string with exercise name and unit
      */
     public static String format(Exercise exercise) {
         if (exercise == null) return "<null exercise>";
-        return exercise.getName() + " (" + exercise.getUnit().getAbbreviation() + ")";
+        return exercise.getName() + " (" + exercise.getUnit() + ")";
     }
 }
