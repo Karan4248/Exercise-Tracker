@@ -26,7 +26,26 @@ I've added the following commands to support the Exercise Tracker application:
 * `REMOVE ACTIVITY` - Remove an activity by ID!
 * `REMOVE OBSTACLE` - Remove an obstacle by ID!
 * `REMOVE MAP` - Remove the entire map!
-
+### Flow of interaction diagrams
+#### Create Profile
+```mermaid
+flowchart
+  subgraph **Create profile**
+    create[[create profile]]
+    home[[Home display]]
+    create-result{Valid username and password crated?}
+    create ==inputs: username, password==> create-result
+    create-result -. incorrect username or password .-> create
+    create-result -. successfully Made profile.-> home
+  end
+```
+#### Logging in 
+```mermaid
+flowchart
+  subgraph **Logging in**
+    login[[Login]]  
+    end
+```
 ## Domain model
 
 ### Resources
@@ -43,7 +62,7 @@ I've added the following commands to support the Exercise Tracker application:
 * I created an `ExerciseLog` to track individual exercises with their routes on a grid.
 * I implemented a `Grid` class to validate exercise routes and manage obstacles.
 
-### Diagram
+### Diagram 
 
 Here is the updated diagram for my domain model. This design allows tracking exercises on a grid with obstacles, supporting flexible exercise types measured in different units.
 
