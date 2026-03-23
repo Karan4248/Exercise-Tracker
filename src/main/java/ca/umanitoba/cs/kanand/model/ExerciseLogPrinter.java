@@ -1,6 +1,4 @@
-package ca.umanitoba.cs.kanand.printers;
-
-import ca.umanitoba.cs.kanand.model.ExerciseLog;
+package ca.umanitoba.cs.kanand.model;
 
 import java.time.format.DateTimeFormatter;
 

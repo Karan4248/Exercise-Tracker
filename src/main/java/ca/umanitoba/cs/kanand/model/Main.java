@@ -1,6 +1,4 @@
-package ca.umanitoba.cs.kanand;
-
-import ca.umanitoba.cs.kanand.model.ExerciseTrackerREPL;
+package ca.umanitoba.cs.kanand.model;
 
 import java.util.Scanner;
 

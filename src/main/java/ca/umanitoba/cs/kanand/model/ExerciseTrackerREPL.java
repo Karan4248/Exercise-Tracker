@@ -1,7 +1,5 @@
 package ca.umanitoba.cs.kanand.model;
 
-import ca.umanitoba.cs.kanand.printers.ExerciseLogPrinter;
-import ca.umanitoba.cs.kanand.printers.ObstaclePlacementPrinter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

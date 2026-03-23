@@ -1,6 +1,4 @@
-package ca.umanitoba.cs.kanand.printers;
-
-import ca.umanitoba.cs.kanand.model.ObstaclePlacement;
+package ca.umanitoba.cs.kanand.model;
 
 public final class ObstaclePlacementPrinter {
     /**
