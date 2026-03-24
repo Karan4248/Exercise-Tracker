@@ -44,6 +44,7 @@ flowchart
 flowchart
   subgraph **Logging in**
     login[[Login]]  
+    login == inputs:username and password ==> login-result
     end
 ```
 ## Domain model
