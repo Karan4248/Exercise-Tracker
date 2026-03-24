@@ -44,9 +44,47 @@ flowchart
 flowchart
   subgraph **Logging in**
     login[[Login]]  
-    login == inputs:username and password ==> login-result
+    login -- Input: username and password --> user{valid username and password?}
+    user -. incorrect username and pasword .-> login 
+    user -- logging in --> home[[Home display]]
     end
 ```
+#### Log activities and add grid 
+```mermaid
+flowchart 
+subgraph **Log user activities and route**
+home[[Home display]]
+addMap[add map]
+addObstacle[Add obstcle to map]
+addPoint[Add Route]
+logout[[logout]]
+showMap[show updated map]
+enterExercise[Add exercise]
+follow[follow users]
+home --> edit[edit]
+edit -- input: password or username --> user{new password or usernme valid?} 
+user -. invalid change .-> edit
+user -- change selected username or password --> home
+home --> follow -- input: select users to follow from feed --> followUser{follow selected user}
+followUser -. cancel .-> home
+home -->enterExercise -- input: enter exercise --> validExercise{Valid exercise}
+validExercise -. invalid exercise or cancel, enter again .-> enterExercise
+validExercise -- add to exercise log and feed --> addMap
+addMap -- input: grid size --> validGrid{Valid grid size?} -- make map with the grid size --> addPoint
+validGrid -. invalid grid size or cancel, enter again .-> addMap
+addPoint -- input: copy route or log new route --> option{copy route or new route}
+option -. chose to copy route .-> selectRoute[choose route to copy] -- input: user selects route to copy --> routeFits{route fits current map?} 
+routeFits -. route selected does not fit or cancel, enter again .-> selectRoute
+option -. cancelled .-> addPoint
+option -. chose new route .-> newRoute[add new route] -- input: starting and end point --> validPoint{valid point?} -- add route --> addObstacle
+validPoint -. invalid point or cancelled, enter again .-> newRoute
+routeFits -- add route --> addObstacle
+addObstacle -- input: if user wants obstacle entered --> optionObstacle{enter obstacale?} -. user chose yes.-> enterObstacale -- input: obstacle type and points --> validObstacle{valid obstacle?} --> showMap
+optionObstacle -. chose not to enter obstacle .-> showMap
+home --> logout
+end
+```
+
 ## Domain model
 
 ### Resources
