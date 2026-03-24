@@ -6,6 +6,8 @@ date: March 24th 2026
 
 # Flows of Interaction
 
+User interaction flows for all Phase 3 tasks. Each flow shows the happy path and error cases (dotted lines) using appropriate flowchart symbols: processes (rectangles), decisions (diamonds), and terminal points (rounded).
+
 ## Resources
 
 *mermaid flow chart syntax: <https://mermaid.ai/open-source/syntax/flowchart.html>
@@ -56,6 +58,37 @@ flowchart
     input -- "Input: new value" --> check
     check -. "Invalid format,<br/>try again" .-> input
     check -- "Valid new value" --> success
+  end
+```
+
+### Logout and Switch Profile
+
+```mermaid
+flowchart
+  subgraph **LOGOUT & SWITCH PROFILE**
+    direction TB
+    start[[Home]]
+    action["Select logout or switch profile"]
+    
+    confirm{Confirm logout?}
+    
+    saved{Unsaved changes?}
+    
+    warn["Warning: unsaved changes<br/>will be lost"]
+    
+    choice{Continue logout?}
+    
+    success[[Logged out, profile list shown]]
+    
+    start -- "Select Logout" --> action
+    action -- "Choose logout" --> confirm
+    confirm -. "Cancel logout" .-> start
+    confirm -- "Confirm logout" --> saved
+    saved -- "No unsaved changes" --> success
+    saved -- "Yes, unsaved changes" --> warn
+    warn -- "Warning displayed" --> choice
+    choice -. "Cancel logout" .-> start
+    choice -- "Continue logout<br/>discard changes" --> success
   end
 ```
 
@@ -221,9 +254,9 @@ I've added the following commands to support the Exercise Tracker application:
 
 * **Added `User` class** - Represents a user profile with username, password, and owned activities. Supports multiple people using the same application instance.
 
-* **Added `Stack` interface and `LinkedStack` implementation** - Required for the stack-based path-finding algorithm. `Stack` defines push/pop operations; `LinkedStack` implements using a linked list structure for efficient operations.
+* **Added `Stack` interface and `LinkedStack` implementation** - Required for the stack-based path-finding algorithm. `Stack` defines push/pop operations; `LinkedStack` implements using a linked list structure. Invariants and contracts are fully specified through preconditions, postconditions, and state requirements in the Javadoc.
 
-* **Added `StackNode` inner class** - Used by `LinkedStack` for linked list structure. Supports path-finding algorithm.
+* **Added `StackNode` inner class** - Used by `LinkedStack` for linked list structure. Includes invariant that `data != null` and maintains proper node chaining for path-finding algorithm.
 
 * **`Grid` class as hard-coded map** - The map is hard-coded and initialized when the software starts. It begins completely empty with no obstacles, but users can add obstacles as they encounter them during activities. Also maintains reference to which points have been covered by routes, enabling path-finding queries.
 
@@ -231,7 +264,7 @@ I've added the following commands to support the Exercise Tracker application:
 
 ### Diagram
 
-Here is the domain model for the Exercise Tracker. This design supports multi-user profiles, activity tracking on a hard-coded grid map, path-finding with stack ADT, and activity feeds for following other users.
+Here is the domain model for the Exercise Tracker. This design supports multi-user profiles, activity tracking on a hard-coded grid map, path-finding with stack ADT, and activity feeds for following other users. **All invariants are documented in class notes** to ensure the model maintains valid states at all times.
 
 ```mermaid
 classDiagram
