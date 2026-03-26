@@ -1,12 +1,12 @@
 ---
-title: Exercise Tracker
-author: Karan Anand (<anandk@myumanitoba.ca>)
-date: March 24th 2026
+title: Exercise Tracker - Phase 4: Implementation
+author: Karan Anand (anandk@myumanitoba.ca)
+date: March 26th 2026
 ---
 
-# Flows of Interaction
+# Exercise Tracker - Phase 4: Implementation
 
-User interaction flows for all Phase 3 tasks. Each flow shows the happy path and error cases (dotted lines) using appropriate flowchart symbols: processes (rectangles), decisions (diamonds), and terminal points (rounded).
+This document describes the complete Phase 4 implementation of the Exercise Tracker application, focusing on interactive flows, multi-user support, error handling, and stack-based pathfinding.
 
 ## Resources
 

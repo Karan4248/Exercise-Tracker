@@ -2,16 +2,22 @@ package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents the map grid for tracking activities.
- * Invariant: width > 0, height > 0, obstacles != null
+ * Invariant: width > 0, height > 0, obstacles != null, coveredPoints != null
+ * 
+ * The grid maintains a set of covered points for use in pathfinding algorithms.
+ * Coverage is tracked to enable finding paths through previously traveled routes.
  */
 public class Grid {
     private final int width;
     private final int height;
     private final List<ObstaclePlacement> obstacles;
+    private final Set<Point> coveredPoints;
 
     /**
      * Creates a grid with the specified dimensions.
@@ -27,6 +33,7 @@ public class Grid {
         this.width = width;
         this.height = height;
         this.obstacles = new ArrayList<>();
+        this.coveredPoints = new HashSet<>();
 
         Preconditions.checkState(checkInvariant(), "Invariant violated");
     }
@@ -142,11 +149,87 @@ public class Grid {
     }
 
     /**
+     * Adds a point to the set of covered points (points that have been traversed by routes).
+     * Used by the pathfinding algorithm to find valid routes.
+     * 
+     * Precondition:
+     *   - point != null
+     *   - point must be in bounds
+     * 
+     * Postcondition:
+     *   - point is added to the covered points set
+     *   - isCovered(point) returns true
+     * 
+     * @param point the Point that has been covered
+     * @throws NullPointerException if point is null
+     * @throws IllegalArgumentException if point is out of bounds
+     */
+    public void addCoveredPoint(Point point) {
+        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
+        Preconditions.checkArgument(isInBounds(point), 
+            "Precondition failed: covered point must be within grid bounds");
+
+        coveredPoints.add(point);
+
+        Preconditions.checkState(checkInvariant(), "Invariant violated after addCoveredPoint");
+        Preconditions.checkState(isCovered(point), "Postcondition failed: point not marked as covered");
+    }
+
+    /**
+     * Checks if a point is covered (has been traversed by a previous route).
+     * 
+     * Precondition:
+     *   - point != null
+     * 
+     * Postcondition:
+     *   - coveredPoints set is unchanged
+     *   - Returns true if point is in the covered set, false otherwise
+     * 
+     * @param point the Point to check
+     * @return true if the point has been covered, false otherwise
+     * @throws NullPointerException if point is null
+     */
+    public boolean isCovered(Point point) {
+        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
+        Preconditions.checkState(checkInvariant(), "Invariant violated before isCovered");
+
+        return coveredPoints.contains(point);
+    }
+
+    /**
+     * Gets a copy of all covered points on the grid.
+     * 
+     * Postcondition:
+     *   - The returned set is a copy (modifications don't affect the grid)
+     *   - The returned set contains all covered points
+     * 
+     * @return a copy of the covered points set
+     */
+    public Set<Point> getCoveredPoints() {
+        Preconditions.checkState(checkInvariant(), "Invariant violated before getCoveredPoints");
+        return new HashSet<>(coveredPoints);
+    }
+
+    /**
+     * Clears all covered points from the grid.
+     * 
+     * Postcondition:
+     *   - coveredPoints is empty
+     *   - isCovered(point) returns false for all points
+     */
+    public void clearCoveredPoints() {
+        coveredPoints.clear();
+
+        Preconditions.checkState(checkInvariant(), "Invariant violated after clearCoveredPoints");
+        Preconditions.checkState(coveredPoints.isEmpty(), "Postcondition failed: covered points not cleared");
+    }
+
+    /**
      * Checks if the grid maintains its invariant conditions.
      *
      * @return true if all invariants hold, false otherwise
      */
     private boolean checkInvariant() {
-        return width > 0 && height > 0 && obstacles != null;
+        return width > 0 && height > 0 && obstacles != null && coveredPoints != null;
     }
 }
