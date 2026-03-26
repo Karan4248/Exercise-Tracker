@@ -1,4 +1,6 @@
-package ca.umanitoba.cs.kanand.model;
+package ca.umanitoba.cs.kanand.printers;
+
+import ca.umanitoba.cs.kanand.model.Point;
 
 public final class PointPrinter {
     /**

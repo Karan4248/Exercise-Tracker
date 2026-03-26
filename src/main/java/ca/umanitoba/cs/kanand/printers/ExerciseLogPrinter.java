@@ -1,6 +1,7 @@
-package ca.umanitoba.cs.kanand.model;
+package ca.umanitoba.cs.kanand.printers;
 
 import java.time.format.DateTimeFormatter;
+import ca.umanitoba.cs.kanand.model.ExerciseLog;
 
 public final class ExerciseLogPrinter {
     private static final DateTimeFormatter DATE = DateTimeFormatter.ISO_LOCAL_DATE;

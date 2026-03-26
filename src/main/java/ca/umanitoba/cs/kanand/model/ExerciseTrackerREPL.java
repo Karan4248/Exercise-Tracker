@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import ca.umanitoba.cs.kanand.printers.ExerciseLogPrinter;
+import ca.umanitoba.cs.kanand.printers.ObstaclePlacementPrinter;
+
 /**
  * REPL (Read-Eval-Print-Loop) for the Exercise Tracker application.
  */
