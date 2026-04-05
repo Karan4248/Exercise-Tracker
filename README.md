@@ -1,208 +1,148 @@
 ---
-title: Exercise Tracker - Phase 4: Implementation
-author: Karan Anand (anandk@myumanitoba.ca)
-date: March 26th 2026
+title: Exercise Tracker
+author: Karan Anand (<anandk@myumanitoba.ca>)
+date: March 24th 2026
 ---
-
-# Exercise Tracker - Phase 4: Implementation
-
-This document describes the complete Phase 4 implementation of the Exercise Tracker application, focusing on interactive flows, multi-user support, error handling, and stack-based pathfinding.
-
 ## Resources
 
 *mermaid flow chart syntax: <https://mermaid.ai/open-source/syntax/flowchart.html>
 
+# Flows of Interaction
+
 ## Diagrams
 
-### Create or Select User Profile
+### Overall Flow
+
+```mermaid
+flowchart
+  subgraph Overall
+    direction TB
+    createProfile[[Create/Select Profile]]
+    viewFeed["View Activity Feed"]
+    addActivity["Add Activity"]
+    findRoute["Find Route"]
+    logout[[Logout]]
+    
+    createProfile -- "Profile created/Selected" --> viewFeed
+    viewFeed -- "Add activity" --> addActivity
+    addActivity -- "Return to feed" --> viewFeed
+    viewFeed -- "Find route" --> findRoute
+    findRoute -- "Return to feed" --> viewFeed
+    viewFeed -- "Logout" --> logout
+  end
+```
+
+#### Create or Select User Profile
 
 ```mermaid
 flowchart
   subgraph **CREATE OR SELECT PROFILE**
     direction TB
     start[[Start]]
-    action{Create new profile<br/>or login?}
-    
-    input["Username and password"]
-    
-    check{Valid username and<br/>valid password?}
-    
+    login["Login or create profile"]
     success[[Logged in]]
-    
-    start -- user chooses --> action
-    action -- "Create new" --> input
-    action -- "Login to existing" --> input
-    input -- "Input: username and password" --> check
-    check -. "Username taken or<br/>credentials incorrect" .-> input
-    check -- "Valid username and password" --> success
+    valid{validate credentials}
+    start -- User enters info --> login
+    login -- input: users info -->valid
+    valid -- Credentials valid, logged in --> success
+    valid -. Invalid credentials .-> login
   end
 ```
 
-### Edit User Profile
+#### Edit User Profile
 
 ```mermaid
 flowchart
   subgraph **EDIT PROFILE**
     direction TB
     start[[Home]]
-    action["Edit username or password"]
-    
-    input["New value"]
-    
-    check{Valid input<br/>format?}
-    
-    success[[Profile updated]]
-    
-    start -- "Select Edit" --> action
-    action -- "Confirm edit type" --> input
-    input -- "Input: new value" --> check
-    check -. "Invalid format,<br/>try again" .-> input
-    check -- "Valid new value" --> success
+    edit["Edit username or password"]
+    success[[Changes saved]]
+    valid{validate changes}
+    start -- Select edit --> edit
+    edit -- input:users new info --> valid
+    valid -- New value valid, changes saved --> success
+    valid -. Invalid input, try again .-> edit
   end
 ```
 
-### Logout and Switch Profile
+#### Logout
 
 ```mermaid
 flowchart
-  subgraph **LOGOUT & SWITCH PROFILE**
+  subgraph **LOGOUT**
     direction TB
     start[[Home]]
-    action["Select logout or switch profile"]
+    confirm["Confirm<br/>logout"]
+    success[[Logged out]]
     
-    confirm{Confirm logout?}
-    
-    saved{Unsaved changes?}
-    
-    warn["Warning: unsaved changes<br/>will be lost"]
-    
-    choice{Continue logout?}
-    
-    success[[Logged out, profile list shown]]
-    
-    start -- "Select Logout" --> action
-    action -- "Choose logout" --> confirm
-    confirm -. "Cancel logout" .-> start
-    confirm -- "Confirm logout" --> saved
-    saved -- "No unsaved changes" --> success
-    saved -- "Yes, unsaved changes" --> warn
-    warn -- "Warning displayed" --> choice
-    choice -. "Cancel logout" .-> start
-    choice -- "Continue logout<br/>discard changes" --> success
+    start -- Select logout --> confirm
+    confirm -- Yes, logout confirmed --> success
+    confirm -. Cancel, return to home .-> start
   end
 ```
 
-### Add New Activity
+#### Add Activity
 
 ```mermaid
 flowchart
   subgraph **ADD ACTIVITY**
     direction TB
     start[[Home]]
-    action["Activity name and exercise type"]
+    info["Enter activity name and type"]
+    route["Copy existing<br/>route or new route"]
+    input["Route points"]
+    obs["Add obstacles"]
+    addobs["Enter obstacles"]
+    validate{Validate route}
+    success[[Activity saved]]
+    start -- Select add activity --> info
+    info -- Enter details --> route
+    route -- Copy from previous --> input
+    route -- Create new --> input
+    input -- input:route points or selected routes -->validate
+    validate -. invalid route .-> input
+    validate -- Route valid --> obs
     
-    routeChoice{Copy previous<br/>or new route?}
-    
-    copyRoute["Select previous route"]
-    newRoute["Start and end coordinates"]
-    
-    copyCheck{Route fits<br/>on map?}
-    newCheck{Valid coordinates<br/>in bounds?}
-    
-    selectRoute["Route selected"]
-    
-    obstacleChoice{Obstacles<br/>encountered?}
-    
-    addObs["Obstacle type and location"]
-    
-    confirm["Confirm and save"]
-    success[[Activity saved to feed]]
-    
-    start -- "Select Add Activity" --> action
-    action -- "Input: name and type" --> routeChoice
-    routeChoice -- "Copy previous" --> copyRoute
-    copyRoute -- "Input: select route" --> copyCheck
-    copyCheck -. "Route doesn't fit on map" .-> copyRoute
-    copyCheck -- "Route fits on map" --> selectRoute
-    
-    routeChoice -- "Enter new" --> newRoute
-    newRoute -- "Input: start and end coordinates" --> newCheck
-    newCheck -. "Invalid coordinates or<br/>out of bounds" .-> newRoute
-    newCheck -- "Valid coordinates in bounds" --> selectRoute
-    
-    selectRoute -- "Route confirmed" --> obstacleChoice
-    obstacleChoice -- "Yes, add obstacle" --> addObs
-    obstacleChoice -- "No obstacles" --> confirm
-    addObs -- "Input: obstacle type and location" --> confirm
-    confirm -- "Confirm activity" --> success
+    obs -- Yes, add obstacles --> addobs
+    obs -- No obstacles --> success
+    addobs -- Obstacles entered --> success
   end
 ```
 
-### Follow Users and View Feed
+#### View Feed & Follow Users
 
 ```mermaid
 flowchart
-  subgraph **VIEW FEED & FOLLOW USERS**
-
+  subgraph **VIEW FEED & FOLLOW**
     direction TB
-
-
     start[[Home]]
-    action["View activity feed"]
+    browse["Browse and follow users"]
+    success[[Feed updated]]
     
-    browse["Browse available users"]
-    
-    select{Select user<br/>to follow?}
-    
-    check{Already<br/>following?}
-    
-    follow["Follow user"]
-    success[[User added to feed]]
-    
-    start -- "Select View Feed" --> action
-    action -- "Show feed" --> browse
-    browse -- "Show users" --> select
-    select -. "Cancel, return to feed" .-> start
-    select -- "Select user" --> check
-    check -. "Already following user" .-> browse
-    check -- "Not following" --> follow
-    follow -- "Follow confirmed,<br/>show updated feed" --> success
+    start -- Select view feed --> browse
+    browse -- Continue browsing, find more users --> browse
+    browse -- Done browsing, users followed --> success
   end
 ```
 
-### Find New Route (Path-Finding)
+#### Find New Route
 
 ```mermaid
 flowchart
   subgraph **FIND NEW ROUTE**
     direction TB
     start[[Home]]
-    scope["Route scope:<br/>my routes or all routes"]
-    
-    input["Start and end coordinates"]
-    
-    validPoints{Both points on<br/>known route?}
-    
-    execute["Execute path-finding algorithm"]
-    
-    pathExists{Path found?}
-    
-    display["Display calculated route"]
-    save{Save as<br/>activity?}
-    
+    find["Select route source and enter points"]
+    route{"Validate and find route"}
+    result["Save route"]
     success[[Route saved]]
-    
-    start -- "Select Find Route" --> scope
-    scope -- "Choose scope" --> input
-    input -- "Input: start and end coordinates" --> validPoints
-    validPoints -. "Points not on known route" .-> input
-    validPoints -- "Points are on known route" --> execute
-    execute -- "Run algorithm" --> pathExists
-    pathExists -. "No path found,<br/>try different points" .-> input
-    pathExists -- "Path found,<br/>show route" --> display
-    display -- "Route displayed" --> save
-    save -- "Save as activity" --> success
-    save -- "Discard" --> start
+    start -- Select find route --> find
+    find -- Route source and points selected --> route
+    route -- Route valid, Route algorithm executed, path found --> result
+    route -. No path between points, try different points .-> find
+    result -- Yes, save as activity --> success
+    result -. No, discard route .-> start
   end
 ```
 
@@ -397,15 +337,12 @@ classDiagram
         +size() int
     }
     
-    note for Stack "
-        Preconditions:
-        * pop: !isEmpty()
-        * peek: !isEmpty()
-        Postconditions:
-        * push: size increases by 1
-        * pop: size decreases by 1, item returned is from top
-        * peek: size unchanged, item returned is from top
-        * size: returns number of items on stack
+    note for Stack "Invariants:
+        * pop requires !isEmpty()
+        * peek requires !isEmpty()
+        * push increases size by 1
+        * pop decreases size by 1
+        * size returns count of items
         "
     
 
@@ -420,19 +357,12 @@ classDiagram
         +size() int
     }
     
-    note for LinkedStack "
-        Preconditions:
-        * pop: !isEmpty()
-        * peek: !isEmpty()
-        Postconditions:
-        * push: item added to head, size increases
-        * pop: head.data returned and removed, size decreases
-        * peek: head.data returned without removal
-        * isEmpty: true iff head == null
-        * size: counts all nodes reachable from head
-        Invariant properties:
-        * head == null iff empty
+    note for LinkedStack "Invariants:
+        * head == null iff stack is empty
+        * push adds item to head
+        * pop removes and returns head
         * all nodes reachable from head
+        * size counts reachable nodes
         "
 
     class StackNode {
