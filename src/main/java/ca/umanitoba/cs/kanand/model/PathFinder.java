@@ -99,35 +99,24 @@ public class PathFinder {
         Stack<Point> stack = new LinkedListStack<>();
         Set<Point> visited = new HashSet<>();
         Point currentPoint = start;
-        Point previous = null;
 
-        // Backtracking algorithm
         int iterationCount = 0;
-        int maxIterations = grid.getWidth() * grid.getHeight() * 10; // Prevent infinite loops
+        int maxIterations = grid.getWidth() * grid.getHeight() * 10;
         
         while (!currentPoint.equals(end) && iterationCount < maxIterations) {
             iterationCount++;
-            
-            // Mark current point as visited
             visited.add(currentPoint);
 
-            // Push unvisited, visitable neighbors onto stack
             List<Point> neighbors = getVisitableNeighbors(currentPoint, visited);
             for (Point neighbor : neighbors) {
                 stack.push(neighbor);
             }
 
-            // Check if we can still proceed
             if (stack.isEmpty()) {
-                // No unvisited neighbors and not at end - no path exists
                 return null;
             }
 
-            // Pop from stack and continue
-            previous = currentPoint;
             currentPoint = stack.pop();
-
-            // Safety check
             Preconditions.checkState(currentPoint != null, 
                 "State invariant failed: popped point is null");
         }
@@ -138,14 +127,11 @@ public class PathFinder {
         }
 
         if (currentPoint.equals(end)) {
-            // Reconstruct path - for simplicity, return just the endpoint
-            // In practice, you might want to reconstruct the full path
             List<Point> path = new ArrayList<>();
             path.add(start);
             path.add(end);
             return path;
         }
-
         return null;
     }
 
@@ -195,7 +181,6 @@ public class PathFinder {
             try {
                 Point neighbor = new Point(newX, newY);
 
-                // Check if neighbor isvalid and visitable
                 if (grid.isInBounds(neighbor) &&
                     !visited.contains(neighbor) &&
                     grid.getObstacleAt(neighbor) == null &&
@@ -204,7 +189,6 @@ public class PathFinder {
                     neighbors.add(neighbor);
                 }
             } catch (Exception e) {
-                // Skip invalid neighbors
                 continue;
             }
         }

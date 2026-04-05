@@ -70,7 +70,7 @@ public class ExerciseTrackerLogic {
         Preconditions.checkNotNull(password, "Precondition failed: password cannot be null");
         Preconditions.checkState(!password.isEmpty(), "Precondition failed: password cannot be empty");
 
-        // Check if username already exists
+
         for (User user : users) {
             if (user.getUsername().equals(username)) {
                 throw new UsernameTakenException(
@@ -218,7 +218,6 @@ public class ExerciseTrackerLogic {
         Preconditions.checkArgument(height > 0, "Precondition failed: height must be positive");
 
         this.grid = new Grid(width, height);
-        // Reset activity ID counters when creating a new map
         ObstaclePlacement.resetIdCounter();
         ExerciseLog.resetIdCounter();
 
@@ -276,18 +275,207 @@ public class ExerciseTrackerLogic {
     }
 
     /**
+     * Changes the username of the current user.
+     * 
+     * Preconditions:
+     *   - currentUser != null (user must be logged in)
+     *   - newUsername != null and !newUsername.isEmpty()
+     *   - newUsername is not already taken by another user
+     * 
+     * Postconditions:
+     *   - currentUser's username has been changed to newUsername
+     * 
+     * @param newUsername the new username to set
+     * @throws IllegalStateException if no user is logged in
+     * @throws NullPointerException if newUsername is null
+     * @throws IllegalArgumentException if newUsername is empty or already taken
+     */
+    public void changeCurrentUserUsername(String newUsername) throws UsernameTakenException {
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
+        Preconditions.checkNotNull(newUsername, "Precondition failed: newUsername cannot be null");
+        Preconditions.checkArgument(!newUsername.isEmpty(), "Precondition failed: newUsername cannot be empty");
+
+        for (User user : users) {
+            if (user != currentUser && user.getUsername().equals(newUsername)) {
+                throw new UsernameTakenException(
+                    "ERROR: Username '" + newUsername + "' is already taken. Please choose a different username.");
+            }
+        }
+
+        currentUser.changeUsername(newUsername);
+
+        Preconditions.checkState(checkInvariant(), "Invariant violated after changeCurrentUserUsername");
+    }
+
+    /**
+     * Changes the password of the current user.
+     * 
+     * Preconditions:
+     *   - currentUser != null (user must be logged in)
+     *   - currentPassword is the correct current password
+     *   - newPassword != null and !newPassword.isEmpty()
+     * 
+     * Postconditions:
+     *   - currentUser's password has been changed to newPassword
+     * 
+     * @param currentPassword the current password for verification
+     * @param newPassword the new password to set
+     * @return true if password was changed, false if current password is incorrect
+     * @throws IllegalStateException if no user is logged in
+     * @throws NullPointerException if either password is null
+     * @throws IllegalArgumentException if newPassword is empty
+     */
+    public boolean changeCurrentUserPassword(String currentPassword, String newPassword) {
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
+        Preconditions.checkNotNull(currentPassword, "Precondition failed: currentPassword cannot be null");
+        Preconditions.checkNotNull(newPassword, "Precondition failed: newPassword cannot be null");
+        Preconditions.checkArgument(!newPassword.isEmpty(), "Precondition failed: newPassword cannot be empty");
+
+        boolean changed = currentUser.changePassword(currentPassword, newPassword);
+
+        if (changed) {
+            Preconditions.checkState(checkInvariant(), "Invariant violated after changeCurrentUserPassword");
+        }
+
+        return changed;
+    }
+
+    /**
+     * Adds an exercise log to the current user's activity.
+     * 
+     * Preconditions:
+     *   - currentUser != null (user must be logged in)
+     *   - log != null
+     * 
+     * Postconditions:
+     *   - The exercise log has been added to currentUser's activity
+     * 
+     * @param log the exercise log to add
+     * @throws IllegalStateException if no user is logged in
+     * @throws NullPointerException if log is null
+     */
+    public void addExerciseLogToCurrentUser(ExerciseLog log) {
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
+        Preconditions.checkNotNull(log, "Precondition failed: log cannot be null");
+
+        currentUser.getActivity().addExerciseLog(log);
+
+        Preconditions.checkState(checkInvariant(), "Invariant violated after addExerciseLogToCurrentUser");
+    }
+
+    /**
+     * Gets all exercise logs from the current user's followed users.
+     * This creates the activity feed based on who the current user is following.
+     * 
+     * Preconditions:
+     *   - currentUser != null (user must be logged in)
+     * 
+     * Postconditions:
+     *   - Returns a list containing all activities from followed users
+     *   - The list does not include activities from the current user
+     * 
+     * @return a list of all exercise logs from followed users
+     * @throws IllegalStateException if no user is logged in
+     */
+    public List<ExerciseLog> getActivityFeed() {
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
+
+        List<ExerciseLog> feed = new ArrayList<>();
+        List<User> following = currentUser.getFollowing();
+
+        for (User user : following) {
+            feed.addAll(user.getActivity().getAllLogs());
+        }
+
+        return feed;
+    }
+
+    /**
+     * Gets all previous routes of the current user.
+     * Used for duplicating routes when adding a new activity.
+     * 
+     * Preconditions:
+     *   - currentUser != null (user must be logged in)
+     * 
+     * Postconditions:
+     *   - Returns a list of all previous exercise logs from the current user
+     * 
+     * @return a list of the current user's previous exercise logs
+     * @throws IllegalStateException if no user is logged in
+     */
+    public List<ExerciseLog> getCurrentUserPreviousRoutes() {
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
+        return currentUser.getActivity().getAllLogs();
+    }
+
+    /**
+     * Gets all covered routes for pathfinding from all followed users (and self).
+     * Used for pathfinding with "all routes" scope.
+     * 
+     * Preconditions:
+     *   - currentUser != null (user must be logged in)
+     * 
+     * Postconditions:
+     *   - Returns a list of all exercise logs from current user and followed users
+     * 
+     * @return a list of exercise logs for global pathfinding scope
+     * @throws IllegalStateException if no user is logged in
+     */
+    public List<ExerciseLog> getAllCoveredRoutes() {
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
+
+        List<ExerciseLog> allRoutes = new ArrayList<>();
+        allRoutes.addAll(currentUser.getActivity().getAllLogs());
+        allRoutes.addAll(getActivityFeed());
+
+        return allRoutes;
+    }
+
+    /**
+     * Finds a path between two points using the pathfinding algorithm.
+     * 
+     * Preconditions:
+     *   - grid != null (map must be initialized)
+     *   - start != null
+     *   - end != null
+     *   - scope is one of PERSONAL_ROUTES or ALL_ROUTES
+     * 
+     * Postconditions:
+     *   - If a path exists, returns the list of points from start to end
+     *   - If no path exists, returns null
+     *   - Grid state is unchanged
+     * 
+     * @param start the starting point
+     * @param end the ending point
+     * @param scope the scope for pathfinding (PERSONAL_ROUTES or ALL_ROUTES)
+     * @return a list of points representing the path, or null if no path exists
+     * @throws MapNotInitializedException if map is not initialized
+     * @throws NullPointerException if start, end, or scope is null
+     * @throws InvalidPathException if pathfinding fails due to grid state
+     */
+    public List<Point> findPath(Point start, Point end, RouteScope scope) 
+            throws MapNotInitializedException, InvalidPathException {
+        if (grid == null) {
+            throw new MapNotInitializedException(
+                "ERROR: Map has not been initialized. Please initialize the map first.");
+        }
+
+        Preconditions.checkNotNull(start, "Precondition failed: start cannot be null");
+        Preconditions.checkNotNull(end, "Precondition failed: end cannot be null");
+        Preconditions.checkNotNull(scope, "Precondition failed: scope cannot be null");
+
+        PathFinder pathFinder = new PathFinder(grid, scope);
+        return pathFinder.findPath(start, end);
+    }
+
+    /**
      * Checks the invariant conditions of this class.
      * 
      * @return true if all invariants are satisfied
      */
     private boolean checkInvariant() {
-        if (users == null) {
-            return false;
-        }
-        // If currentUser is not null, it must be in the users list
-        if (currentUser != null && !users.contains(currentUser)) {
-            return false;
-        }
+        if (users == null) return false;
+        if (currentUser != null && !users.contains(currentUser)) return false;
         return true;
     }
 }

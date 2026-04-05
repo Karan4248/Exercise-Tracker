@@ -428,3 +428,160 @@ classDiagram
         * hard-coded and initialized at startup
         "
 ```
+
+# Phase 4 Implementation
+
+## Running the Application
+
+The functional application can be started by running the `main` method in `Main.java`.
+
+To start the application:
+1. Build: `mvn clean compile`
+2. Run: `mvn exec:java -Dexec.mainClass="ca.umanitoba.cs.kanand.Main"`
+3. Or run `Main.java` directly from your IDE
+
+## Architecture & Design Decisions
+
+### UI Layer Separation
+For Phase 4, I created a clean separation of concerns by introducing an explicit **UI layer** (`ExerciseTrackerUI` in the `ui` package) that handles all user interaction and input validation. This follows the pattern demonstrated in the professor's 2450-hack example project.
+
+**Design benefits:**
+- **Single Responsibility Principle**: UI layer handles all input/output; logic layer handles business logic; model layer encapsulates domain logic
+- **Input Validation**: All user input is validated in the UI layer before being passed to the logic layer
+- **Error Handling**: Custom exceptions flow from model → logic → UI, providing clear error messages to users
+- **Testability**: Logic layer can be tested independently without UI
+
+### Project Structure
+```
+src/main/java/ca/umanitoba/cs/kanand/
+├── Main.java                          # Entry point
+├── model/                             # Domain model
+│   ├── User.java
+│   ├── Activity.java
+│   ├── ExerciseLog.java
+│   ├── Exercise.java
+│   ├── Grid.java
+│   ├── Point.java
+│   ├── ObstaclePlacement.java
+│   ├── Obstacle.java (enum)
+│   ├── Unit.java (enum)
+│   ├── RouteScope.java (enum)
+│   ├── PathFinder.java
+│   ├── Stack.java (interface)
+│   └── LinkedListStack.java
+├── logic/                             # Business logic layer
+│   └── ExerciseTrackerLogic.java
+├── ui/                                # User interface layer (NEW)
+│   └── ExerciseTrackerUI.java
+├── printers/                          # Output formatting
+│   ├── ExerciseLogPrinter.java
+│   ├── ExercisePrinter.java
+│   ├── ObstaclePlacementPrinter.java
+│   └── PointPrinter.java
+└── exceptions/                        # Custom exceptions
+    ├── InvalidActivityException.java
+    ├── InvalidCredentialsException.java
+    ├── InvalidPathException.java
+    ├── InvalidPointException.java
+    ├── MapNotInitializedException.java
+    └── UsernameTakenException.java
+```
+
+## Phase 4 Features Implemented
+
+### 1. User Authentication & Multi-User Support
+- Users can create new accounts with username/password validation
+- Users can login to existing accounts
+- Passwords validated for minimum length and non-empty
+- Usernames must be unique and non-empty
+- Custom exception handling with clear error messages
+
+### 2. Activity Feed & Social Following
+- Users can view an activity feed of all activities from users they follow
+- Users can browse other users and toggle follow status
+- Following users enables seeing their activities in the feed
+- Users cannot follow themselves
+
+### 3. Adding Activities with Route Options
+- Users can enter a new activity with name, exercise type, unit, and distance
+- Users can copy a previous route from their own activities
+- Users can manually enter a new route (sequence of coordinates)
+- Input validation ensures distance is positive, route has at least 1 point
+- Optional: Users can add obstacles encountered during the activity
+
+### 4. Finding Routes via Pathfinding Algorithm
+- Users can search for routes using stack-based pathfinding algorithm
+- Two scope options:
+  - **MY_ROUTES_ONLY**: Find path using only own previous routes
+  - **ALL_ROUTES**: Find path using routes from all followed users
+- Found routes can be converted directly into new activities
+- PathFinder uses stack ADT to implement backtracking algorithm
+
+### 5. Profile Management
+- Users can change their username (with uniqueness validation)
+- Users can change their password (requires current password verification)
+- Changes are validated for empty/invalid input
+
+## Input Validation Strategy
+
+### UI Layer Validation
+- **Username**: Non-empty, minimum 3 characters, unique (for registration)
+- **Password**: Non-empty, minimum 3 characters, correct verification (for change)
+- **Distance**: Must be positive numeric value
+- **Coordinates**: Valid integers within grid bounds
+- **Enums**: Validated against allowed values (Unit, Obstacle types)
+
+### Logic Layer Validation
+- Verifies user exists and credentials match (LoginUser)
+- Verifies username uniqueness before account creation
+- Coordinates are validated to be within grid bounds
+
+### Domain Model Validation
+- All class invariants are checked via preconditions and postconditions
+- Stack operations validated (pop/peek on non-empty only)
+- Point coordinates always non-negative
+
+## Error Handling & Reporting
+
+### Exception Hierarchy
+- `UsernameTakenException`: Indicates username already in use
+- `InvalidCredentialsException`: Login credentials don't match
+- `MapNotInitializedException`: Map accessed before initialization
+- `InvalidPathException`: Pathfinding algorithm encountered invalid state
+- `InvalidPointException`: Point outside bounds or invalid
+- Generic `NumberFormatException`: Caught and reported as user-friendly message
+
+### User-Friendly Error Messages
+All errors are caught at the UI layer and presented with clear guidance:
+- ✗ Indicates error condition
+- ✓ Indicates successful operation
+- Specific guidance on fixing the problem (e.g., "Username must be at least 3 characters")
+
+## Design by Contract Implementation
+
+### Preconditions
+- Methods check that parameters are not null
+- Methods validate that inputs meet minimum requirements
+- For pathfinding: start/end points must be in bounds
+
+### Postconditions
+- User successfully created iff added to users list
+- User successfully logged in iff currentUser set correctly
+- Route successfully added iff found in user's activity list
+- Password successfully changed iff authenticate succeeds with new password
+
+### Invariants
+- Users list is never null
+- Current user, if not null, must be in users list
+- Grid, if not null, is properly initialized
+- All domain model classes maintain documented invariants
+
+## No REPL in Phase 4
+
+As specified in the requirements, the original REPL is not part of Phase 4 grading. Instead, the grading staff will:
+- Test the application through the UI by entering invalid inputs
+- Verify input validation prevents crashes
+- Verify error messages are clear and helpful
+- Verify all flows (authentication, add activity, find route, etc.) work correctly
+
+
