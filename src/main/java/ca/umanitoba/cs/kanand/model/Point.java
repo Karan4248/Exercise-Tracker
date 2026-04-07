@@ -1,6 +1,7 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
+import ca.umanitoba.cs.kanand.exceptions.InvalidPointException;
 
 /**
  * Represents a coordinate point on the grid.
@@ -53,16 +54,6 @@ public class Point {
     }
 
     /**
-     * Generates a hash code for this point.
-     *
-     * @return the hash code
-     */
-    @Override
-    public int hashCode() {
-        return 31 * x + y;
-    }
-
-    /**
      * Checks the class invariant.
      *
      * @return true if the invariant is satisfied, false otherwise
@@ -93,8 +84,12 @@ public class Point {
          *
          * @param x the X coordinate (must be non-negative)
          * @return this builder instance for method chaining
+         * @throws InvalidPointException if x is negative
          */
-        public PointBuilder x(int x) {
+        public PointBuilder x(int x) throws InvalidPointException {
+            if (x < 0) {
+                throw new InvalidPointException("X coordinate must be non-negative, got: " + x);
+            }
             this.x = x;
             return this;
         }
@@ -104,8 +99,12 @@ public class Point {
          *
          * @param y the Y coordinate (must be non-negative)
          * @return this builder instance for method chaining
+         * @throws InvalidPointException if y is negative
          */
-        public PointBuilder y(int y) {
+        public PointBuilder y(int y) throws InvalidPointException {
+            if (y < 0) {
+                throw new InvalidPointException("Y coordinate must be non-negative, got: " + y);
+            }
             this.y = y;
             return this;
         }

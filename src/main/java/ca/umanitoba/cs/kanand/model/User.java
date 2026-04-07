@@ -1,6 +1,7 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
+import ca.umanitoba.cs.kanand.exceptions.InvalidCredentialsException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -278,31 +279,6 @@ public class User {
     }
 
     /**
-     * Compares this user with another object for equality.
-     * Users are equal if they have the same username.
-     * 
-     * @param obj the object to compare with
-     * @return true if the objects represent the same user, false otherwise
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        User user = (User) obj;
-        return username.equals(user.username);
-    }
-
-    /**
-     * Generates a hash code for this user based on username.
-     * 
-     * @return the hash code
-     */
-    @Override
-    public int hashCode() {
-        return username.hashCode();
-    }
-
-    /**
      * Creates a new builder for User objects.
      *
      * @return a new UserBuilder instance
@@ -324,8 +300,12 @@ public class User {
          *
          * @param username the username (must be non-empty)
          * @return this builder instance for method chaining
+         * @throws InvalidCredentialsException if username is null or empty
          */
-        public UserBuilder username(String username) {
+        public UserBuilder username(String username) throws InvalidCredentialsException {
+            if (username == null || username.isEmpty()) {
+                throw new InvalidCredentialsException("Username cannot be null or empty.");
+            }
             this.username = username;
             return this;
         }
@@ -335,8 +315,12 @@ public class User {
          *
          * @param password the password (must be non-empty)
          * @return this builder instance for method chaining
+         * @throws InvalidCredentialsException if password is null or empty
          */
-        public UserBuilder password(String password) {
+        public UserBuilder password(String password) throws InvalidCredentialsException {
+            if (password == null || password.isEmpty()) {
+                throw new InvalidCredentialsException("Password cannot be null or empty.");
+            }
             this.password = password;
             return this;
         }

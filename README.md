@@ -194,9 +194,7 @@ I've added the following commands to support the Exercise Tracker application:
 
 * **Added `User` class** - Represents a user profile with username, password, and owned activities. Supports multiple people using the same application instance.
 
-* **Added `Stack` interface and `LinkedStack` implementation** - Required for the stack-based path-finding algorithm. `Stack` defines push/pop operations; `LinkedStack` implements using a linked list structure. Invariants and contracts are fully specified through preconditions, postconditions, and state requirements in the Javadoc.
-
-* **Added `StackNode` inner class** - Used by `LinkedStack` for linked list structure. Includes invariant that `data != null` and maintains proper node chaining for path-finding algorithm.
+* **Added `Stack` interface and `LinkedListStack` implementation** - Required for the stack-based path-finding algorithm. `Stack` defines push/pop operations; `LinkedListStack` implements using a linked list structure with a private inner `StackNode` class. Invariants and contracts are fully specified through preconditions, postconditions, and state requirements in the Javadoc.
 
 * **`Grid` class as hard-coded map** - The map is hard-coded and initialized when the software starts. It begins completely empty with no obstacles, but users can add obstacles as they encounter them during activities. Also maintains reference to which points have been covered by routes, enabling path-finding queries.
 
@@ -216,9 +214,12 @@ classDiagram
         
         +getUsername() String
         +authenticate(String pwd) boolean
+        +changePassword(String current, String newPwd) boolean
+        +changeUsername(String newUsername) void
         +getActivity() Activity
         +addFollowing(User user) void
-        +removeFollowing(User user) void
+        +removeFollowing(User user) boolean
+        +isFollowing(User user) boolean
         +getFollowing() List~User~
     }
     
@@ -252,12 +253,14 @@ classDiagram
         -List~Point~ points
         -Exercise exercise
         -LocalDateTime timestamp
+        -double distance
         
         +getId() int
         +getName() String
         +getPoints() List~Point~
         +getExercise() Exercise
         +getTimestamp() LocalDateTime
+        +getDistance() double
     }
     
     note for ExerciseLog "Invariant properties:
@@ -285,16 +288,20 @@ classDiagram
         -int width
         -int height
         -List~ObstaclePlacement~ obstacles
-        -Set~Point~ coveredPoints
+        -List~Point~ coveredPoints
         
         +getWidth() int
         +getHeight() int
+        +isValid(Point p) boolean
         +isInBounds(Point p) boolean
         +addObstacle(ObstaclePlacement o) void
         +removeObstacle(int id) boolean
+        +getObstacleAt(Point p) ObstaclePlacement
         +getObstacles() List~ObstaclePlacement~
         +addCoveredPoint(Point p) void
         +isCovered(Point p) boolean
+        +getCoveredPoints() List~Point~
+        +clearCoveredPoints() void
     }
 
     class Point {
@@ -304,7 +311,6 @@ classDiagram
         +getX() int
         +getY() int
         +equals(Object) boolean
-        +hashCode() int
     }
     
     note for Point "Invariant properties:
@@ -347,8 +353,9 @@ classDiagram
     
 
 
-    class LinkedStack {
+    class LinkedListStack {
         -StackNode head
+        -int size
         
         +push(Object item) void
         +pop() Object
@@ -357,26 +364,13 @@ classDiagram
         +size() int
     }
     
-    note for LinkedStack "Invariants:
+    note for LinkedListStack "Invariants:
         * head == null iff stack is empty
         * push adds item to head
         * pop removes and returns head
         * all nodes reachable from head
         * size counts reachable nodes
-        "
-
-    class StackNode {
-        -Object data
-        -StackNode next
-        
-        +getData() Object
-        +getNext() StackNode
-        +setNext(StackNode node) void
-    }
-    
-    note for StackNode "Inner class of LinkedStack
-        Invariant properties:
-        * data != null
+        * StackNode is private inner class
         "
 
     class Obstacle {
@@ -416,9 +410,7 @@ classDiagram
     ObstaclePlacement *-- Point
     ObstaclePlacement *-- Obstacle
     
-    LinkedStack *-- StackNode
-    StackNode o-- StackNode
-    Stack <|.. LinkedStack
+    Stack <|.. LinkedListStack
     
     note for Grid "Invariant properties:
         * width > 0

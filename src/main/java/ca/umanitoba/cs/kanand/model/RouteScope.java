@@ -7,21 +7,6 @@ package ca.umanitoba.cs.kanand.model;
  * ALL_ROUTES: Search using routes from all users the current user follows
  */
 public enum RouteScope {
-    MY_ROUTES_ONLY("Only my routes"),
-    ALL_ROUTES("All followed users' routes");
-
-    private final String description;
-
-    RouteScope(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Gets the human-readable description of this scope.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
+    MY_ROUTES_ONLY,
+    ALL_ROUTES
 }

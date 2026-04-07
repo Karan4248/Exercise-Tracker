@@ -2,9 +2,7 @@ package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents the map grid for tracking activities.
@@ -17,7 +15,7 @@ public class Grid {
     private final int width;
     private final int height;
     private final List<ObstaclePlacement> obstacles;
-    private final Set<Point> coveredPoints;
+    private final List<Point> coveredPoints;
 
     /**
      * Creates a grid with the specified dimensions.
@@ -33,7 +31,7 @@ public class Grid {
         this.width = width;
         this.height = height;
         this.obstacles = new ArrayList<>();
-        this.coveredPoints = new HashSet<>();
+        this.coveredPoints = new ArrayList<>();
 
         Preconditions.checkState(checkInvariant(), "Invariant violated");
     }
@@ -59,28 +57,6 @@ public class Grid {
      */
     public List<ObstaclePlacement> getObstacles() {
         return new ArrayList<>(obstacles);
-    }
-
-    /**
-     * Checks if a point is valid (in bounds and not occupied by an obstacle).
-     *
-     * @param point the Point to check
-     * @return true if the point is valid, false otherwise
-     * @throws NullPointerException if point is null
-     */
-    public boolean isValid(Point point) {
-        Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
-
-        if (point.getX() < 0 || point.getX() > width ||
-            point.getY() < 0 || point.getY() > height) {
-            return false;
-        }
-        for (ObstaclePlacement obs : obstacles) {
-            if (obs.occupies(point)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -169,7 +145,9 @@ public class Grid {
         Preconditions.checkArgument(isInBounds(point), 
             "Precondition failed: covered point must be within grid bounds");
 
-        coveredPoints.add(point);
+        if (!coveredPoints.contains(point)) {
+            coveredPoints.add(point);
+        }
 
         Preconditions.checkState(checkInvariant(), "Invariant violated after addCoveredPoint");
         Preconditions.checkState(isCovered(point), "Postcondition failed: point not marked as covered");
@@ -200,14 +178,14 @@ public class Grid {
      * Gets a copy of all covered points on the grid.
      * 
      * Postcondition:
-     *   - The returned set is a copy (modifications don't affect the grid)
-     *   - The returned set contains all covered points
+     *   - The returned list is a copy (modifications don't affect the grid)
+     *   - The returned list contains all covered points
      * 
-     * @return a copy of the covered points set
+     * @return a copy of the covered points list
      */
-    public Set<Point> getCoveredPoints() {
+    public List<Point> getCoveredPoints() {
         Preconditions.checkState(checkInvariant(), "Invariant violated before getCoveredPoints");
-        return new HashSet<>(coveredPoints);
+        return new ArrayList<>(coveredPoints);
     }
 
     /**
@@ -255,8 +233,10 @@ public class Grid {
          *
          * @param width the grid width (must be positive)
          * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if width is not positive
          */
         public GridBuilder width(int width) {
+            Preconditions.checkArgument(width > 0, "Grid width must be positive, got: " + width);
             this.width = width;
             return this;
         }
@@ -266,8 +246,10 @@ public class Grid {
          *
          * @param height the grid height (must be positive)
          * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if height is not positive
          */
         public GridBuilder height(int height) {
+            Preconditions.checkArgument(height > 0, "Grid height must be positive, got: " + height);
             this.height = height;
             return this;
         }

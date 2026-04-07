@@ -360,6 +360,15 @@ public class ExerciseTrackerLogic {
 
         currentUser.getActivity().addExerciseLog(log);
 
+        // Mark route points as covered on the grid for pathfinding
+        if (grid != null) {
+            for (Point p : log.getPoints()) {
+                if (grid.isInBounds(p)) {
+                    grid.addCoveredPoint(p);
+                }
+            }
+        }
+
         Preconditions.checkState(checkInvariant(), "Invariant violated after addExerciseLogToCurrentUser");
     }
 
@@ -406,29 +415,6 @@ public class ExerciseTrackerLogic {
     public List<ExerciseLog> getCurrentUserPreviousRoutes() {
         Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
         return currentUser.getActivity().getAllLogs();
-    }
-
-    /**
-     * Gets all covered routes for pathfinding from all followed users (and self).
-     * Used for pathfinding with "all routes" scope.
-     * 
-     * Preconditions:
-     *   - currentUser != null (user must be logged in)
-     * 
-     * Postconditions:
-     *   - Returns a list of all exercise logs from current user and followed users
-     * 
-     * @return a list of exercise logs for global pathfinding scope
-     * @throws IllegalStateException if no user is logged in
-     */
-    public List<ExerciseLog> getAllCoveredRoutes() {
-        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
-
-        List<ExerciseLog> allRoutes = new ArrayList<>();
-        allRoutes.addAll(currentUser.getActivity().getAllLogs());
-        allRoutes.addAll(getActivityFeed());
-
-        return allRoutes;
     }
 
     /**

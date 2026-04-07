@@ -4,7 +4,6 @@ import ca.umanitoba.cs.kanand.logic.ExerciseTrackerLogic;
 import ca.umanitoba.cs.kanand.model.*;
 import ca.umanitoba.cs.kanand.exceptions.*;
 import ca.umanitoba.cs.kanand.printers.ExerciseLogPrinter;
-import ca.umanitoba.cs.kanand.printers.ObstaclePlacementPrinter;
 
 import java.util.*;
 
@@ -257,40 +256,62 @@ public class ExerciseTrackerUI {
         
         try {
             Grid grid = logic.getGrid();
+            ExerciseLog.ExerciseLogBuilder logBuilder = ExerciseLog.builder();
+            Exercise.ExerciseBuilder exerciseBuilder = Exercise.builder();
             
-            String name = getInput("Activity name: ");
-            if (isEmpty(name)) {
-                System.out.println("ERROR: Name cannot be empty.");
-                return;
-            }
-            
-            String type = getInput("Exercise type: ");
-            if (isEmpty(type)) {
-                System.out.println("ERROR: Type cannot be empty.");
-                return;
-            }
-            
-            String unitStr = getInput("Unit (KILOMETERS/MILES/METERS/STEPS): ");
-            Unit unit;
-            try {
-                unit = Unit.valueOf(unitStr.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERROR: Invalid unit.");
-                return;
-            }
-            
-            String distStr = getInput("Distance: ");
-            double distance;
-            try {
-                distance = Double.parseDouble(distStr);
-                if (distance <= 0) {
-                    System.out.println("ERROR: Distance must be positive.");
-                    return;
+            // Get activity name using builder validation
+            boolean validName = false;
+            do {
+                String name = getInput("Activity name: ");
+                try {
+                    logBuilder.name(name);
+                    validName = true;
+                } catch (InvalidActivityException e) {
+                    System.out.println("ERROR: " + e.getMessage());
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("ERROR: Invalid distance.");
-                return;
-            }
+            } while (!validName);
+            
+            // Get exercise type using builder validation
+            boolean validType = false;
+            do {
+                String type = getInput("Exercise type: ");
+                try {
+                    exerciseBuilder.name(type);
+                    validType = true;
+                } catch (InvalidActivityException e) {
+                    System.out.println("ERROR: " + e.getMessage());
+                }
+            } while (!validType);
+            
+            // Get unit using builder validation
+            boolean validUnit = false;
+            do {
+                String unitStr = getInput("Unit (KILOMETERS/MILES/METERS/STEPS): ");
+                try {
+                    Unit unit = Unit.valueOf(unitStr.toUpperCase());
+                    exerciseBuilder.unit(unit);
+                    validUnit = true;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("ERROR: Invalid unit.");
+                } catch (InvalidActivityException e) {
+                    System.out.println("ERROR: " + e.getMessage());
+                }
+            } while (!validUnit);
+            
+            // Get distance using builder validation
+            boolean validDistance = false;
+            do {
+                String distStr = getInput("Distance: ");
+                try {
+                    double distance = Double.parseDouble(distStr);
+                    logBuilder.distance(distance);
+                    validDistance = true;
+                } catch (NumberFormatException e) {
+                    System.out.println("ERROR: Invalid distance.");
+                } catch (InvalidActivityException e) {
+                    System.out.println("ERROR: " + e.getMessage());
+                }
+            } while (!validDistance);
             
             List<Point> route = selectRouteFlow(grid);
             if (route == null || route.isEmpty()) {
@@ -298,8 +319,15 @@ public class ExerciseTrackerUI {
                 return;
             }
             
-            Exercise exercise = new Exercise(type, unit);
-            ExerciseLog log = new ExerciseLog(name, exercise, route, distance);
+            try {
+                logBuilder.route(route);
+            } catch (InvalidActivityException e) {
+                System.out.println("ERROR: " + e.getMessage());
+                return;
+            }
+            
+            logBuilder.exercise(exerciseBuilder.build());
+            ExerciseLog log = logBuilder.build();
             logic.addExerciseLogToCurrentUser(log);
             
             System.out.println("✓ Activity added!");
@@ -311,6 +339,8 @@ public class ExerciseTrackerUI {
             
         } catch (MapNotInitializedException e) {
             System.out.println("ERROR: Map not initialized.");
+        } catch (InvalidActivityException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
 
@@ -409,6 +439,11 @@ public class ExerciseTrackerUI {
                 
                 int x = Integer.parseInt(parts[0]);
                 int y = Integer.parseInt(parts[1]);
+                if (x < 0 || y < 0) {
+                    System.out.println("ERROR: Coordinates must be non-negative.");
+                    i--;
+                    continue;
+                }
                 Point p = new Point(x, y);
                 
                 if (!grid.isInBounds(p)) {
@@ -479,31 +514,72 @@ public class ExerciseTrackerUI {
             System.out.println("✓ Path found! (" + path.size() + " points)");
             
             if (askYesNo("Create activity from this route?")) {
-                String name = getInput("Activity name: ");
-                if (isEmpty(name)) {
-                    System.out.println("Cancelled.");
-                    return;
-                }
-                
-                String type = getInput("Exercise type: ");
-                String unitStr = getInput("Unit: ");
-                String distStr = getInput("Distance: ");
-                
                 try {
-                    Unit unit = Unit.valueOf(unitStr.toUpperCase());
-                    double dist = Double.parseDouble(distStr);
+                    ExerciseLog.ExerciseLogBuilder logBuilder = ExerciseLog.builder();
+                    Exercise.ExerciseBuilder exerciseBuilder = Exercise.builder();
                     
-                    if (dist <= 0) {
-                        System.out.println("ERROR: Distance must be positive.");
-                        return;
-                    }
+                    // Get activity name using builder validation
+                    boolean validName = false;
+                    do {
+                        String name = getInput("Activity name: ");
+                        try {
+                            logBuilder.name(name);
+                            validName = true;
+                        } catch (InvalidActivityException e) {
+                            System.out.println("ERROR: " + e.getMessage());
+                        }
+                    } while (!validName);
                     
-                    Exercise ex = new Exercise(type, unit);
-                    ExerciseLog log = new ExerciseLog(name, ex, path, dist);
+                    // Get exercise type using builder validation
+                    boolean validType = false;
+                    do {
+                        String type = getInput("Exercise type: ");
+                        try {
+                            exerciseBuilder.name(type);
+                            validType = true;
+                        } catch (InvalidActivityException e) {
+                            System.out.println("ERROR: " + e.getMessage());
+                        }
+                    } while (!validType);
+                    
+                    // Get unit using builder validation
+                    boolean validUnit = false;
+                    do {
+                        String unitStr = getInput("Unit (KILOMETERS/MILES/METERS/STEPS): ");
+                        try {
+                            Unit unit = Unit.valueOf(unitStr.toUpperCase());
+                            exerciseBuilder.unit(unit);
+                            validUnit = true;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("ERROR: Invalid unit.");
+                        } catch (InvalidActivityException e) {
+                            System.out.println("ERROR: " + e.getMessage());
+                        }
+                    } while (!validUnit);
+                    
+                    // Get distance using builder validation
+                    boolean validDistance = false;
+                    do {
+                        String distStr = getInput("Distance: ");
+                        try {
+                            double dist = Double.parseDouble(distStr);
+                            logBuilder.distance(dist);
+                            validDistance = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println("ERROR: Invalid distance.");
+                        } catch (InvalidActivityException e) {
+                            System.out.println("ERROR: " + e.getMessage());
+                        }
+                    } while (!validDistance);
+                    
+                    logBuilder.route(path);
+                    logBuilder.exercise(exerciseBuilder.build());
+                    
+                    ExerciseLog log = logBuilder.build();
                     logic.addExerciseLogToCurrentUser(log);
                     
                     System.out.println("✓ Activity created!");
-                } catch (Exception e) {
+                } catch (InvalidActivityException e) {
                     System.out.println("ERROR: " + e.getMessage());
                 }
             }
@@ -533,6 +609,10 @@ public class ExerciseTrackerUI {
             
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
+            if (x < 0 || y < 0) {
+                System.out.println("ERROR: Coordinates must be non-negative.");
+                return null;
+            }
             Point p = new Point(x, y);
             
             if (!grid.isInBounds(p)) {
@@ -673,6 +753,10 @@ public class ExerciseTrackerUI {
                 
                 int x = Integer.parseInt(parts[0]);
                 int y = Integer.parseInt(parts[1]);
+                if (x < 0 || y < 0) {
+                    System.out.println("ERROR: Coordinates must be non-negative.");
+                    continue;
+                }
                 Point p = new Point(x, y);
                 
                 if (!grid.isInBounds(p)) {
@@ -720,7 +804,12 @@ public class ExerciseTrackerUI {
      */
     private String getInput(String prompt) {
         System.out.print(prompt);
-        return scanner.nextLine().trim();
+        try {
+            return scanner.nextLine().trim();
+        } catch (NoSuchElementException e) {
+            running = false;
+            return "";
+        }
     }
 
     /**

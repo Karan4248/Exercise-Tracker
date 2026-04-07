@@ -2,7 +2,6 @@ package ca.umanitoba.cs.kanand.model;
 
 import ca.umanitoba.cs.kanand.test.TestResults;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Test suite for Grid class following COMP 2450 class methodology.
@@ -262,7 +261,7 @@ public class GridTest {
             grid.addCoveredPoint(p2);
             grid.addCoveredPoint(p3);
             
-            Set<Point> covered = grid.getCoveredPoints();
+            List<Point> covered = grid.getCoveredPoints();
             if (covered.size() == 3 && covered.contains(p1) && covered.contains(p2) && covered.contains(p3)) {
                 results.pass("getCoveredPoints returns all covered points");
             } else {

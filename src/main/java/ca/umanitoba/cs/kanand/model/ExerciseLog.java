@@ -1,6 +1,7 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
+import ca.umanitoba.cs.kanand.exceptions.InvalidActivityException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,8 +132,12 @@ public class ExerciseLog {
          *
          * @param name the activity name (must be non-empty)
          * @return this builder instance for method chaining
+         * @throws InvalidActivityException if name is null or empty
          */
-        public ExerciseLogBuilder name(String name) {
+        public ExerciseLogBuilder name(String name) throws InvalidActivityException {
+            if (name == null || name.isEmpty()) {
+                throw new InvalidActivityException("Activity name cannot be null or empty.");
+            }
             this.name = name;
             return this;
         }
@@ -142,8 +147,12 @@ public class ExerciseLog {
          *
          * @param exercise the Exercise type
          * @return this builder instance for method chaining
+         * @throws InvalidActivityException if exercise is null
          */
-        public ExerciseLogBuilder exercise(Exercise exercise) {
+        public ExerciseLogBuilder exercise(Exercise exercise) throws InvalidActivityException {
+            if (exercise == null) {
+                throw new InvalidActivityException("Exercise type cannot be null.");
+            }
             this.exercise = exercise;
             return this;
         }
@@ -153,8 +162,12 @@ public class ExerciseLog {
          *
          * @param route the list of route points (must be non-empty)
          * @return this builder instance for method chaining
+         * @throws InvalidActivityException if route is null or empty
          */
-        public ExerciseLogBuilder route(List<Point> route) {
+        public ExerciseLogBuilder route(List<Point> route) throws InvalidActivityException {
+            if (route == null || route.isEmpty()) {
+                throw new InvalidActivityException("Route cannot be null or empty.");
+            }
             this.route = route;
             return this;
         }
@@ -164,8 +177,12 @@ public class ExerciseLog {
          *
          * @param distance the distance value
          * @return this builder instance for method chaining
+         * @throws InvalidActivityException if distance is not positive
          */
-        public ExerciseLogBuilder distance(double distance) {
+        public ExerciseLogBuilder distance(double distance) throws InvalidActivityException {
+            if (distance <= 0) {
+                throw new InvalidActivityException("Distance must be positive, got: " + distance);
+            }
             this.distance = distance;
             return this;
         }

@@ -1,6 +1,7 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
+import ca.umanitoba.cs.kanand.exceptions.InvalidPointException;
 
 /**
  * Represents an obstacle placed at a specific location on the grid.
@@ -102,8 +103,12 @@ public class ObstaclePlacement {
          *
          * @param location the point where the obstacle is placed
          * @return this builder instance for method chaining
+         * @throws InvalidPointException if location is null
          */
-        public ObstaclePlacementBuilder location(Point location) {
+        public ObstaclePlacementBuilder location(Point location) throws InvalidPointException {
+            if (location == null) {
+                throw new InvalidPointException("Obstacle location cannot be null.");
+            }
             this.location = location;
             return this;
         }
@@ -113,8 +118,12 @@ public class ObstaclePlacement {
          *
          * @param type the obstacle type
          * @return this builder instance for method chaining
+         * @throws InvalidPointException if type is null
          */
-        public ObstaclePlacementBuilder type(Obstacle type) {
+        public ObstaclePlacementBuilder type(Obstacle type) throws InvalidPointException {
+            if (type == null) {
+                throw new InvalidPointException("Obstacle type cannot be null.");
+            }
             this.type = type;
             return this;
         }

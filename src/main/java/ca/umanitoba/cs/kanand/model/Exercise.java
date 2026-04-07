@@ -1,6 +1,7 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
+import ca.umanitoba.cs.kanand.exceptions.InvalidActivityException;
 
 /**
  * Represents a type of exercise (e.g., Running, Cycling).
@@ -70,8 +71,12 @@ public class Exercise {
          *
          * @param name the exercise name (must be non-empty)
          * @return this builder instance for method chaining
+         * @throws InvalidActivityException if name is null or empty
          */
-        public ExerciseBuilder name(String name) {
+        public ExerciseBuilder name(String name) throws InvalidActivityException {
+            if (name == null || name.isEmpty()) {
+                throw new InvalidActivityException("Exercise name cannot be null or empty.");
+            }
             this.name = name;
             return this;
         }
@@ -81,8 +86,12 @@ public class Exercise {
          *
          * @param unit the unit of measurement
          * @return this builder instance for method chaining
+         * @throws InvalidActivityException if unit is null
          */
-        public ExerciseBuilder unit(Unit unit) {
+        public ExerciseBuilder unit(Unit unit) throws InvalidActivityException {
+            if (unit == null) {
+                throw new InvalidActivityException("Exercise unit cannot be null.");
+            }
             this.unit = unit;
             return this;
         }

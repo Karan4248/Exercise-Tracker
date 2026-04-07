@@ -3,9 +3,9 @@ package ca.umanitoba.cs.kanand.model;
 import com.google.common.base.Preconditions;
 import ca.umanitoba.cs.kanand.exceptions.InvalidPathException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Implements a backtracking pathfinding algorithm to find routes on a grid.
@@ -97,7 +97,8 @@ public class PathFinder {
 
         // Initialize algorithm state
         Stack<Point> stack = new LinkedListStack<>();
-        Set<Point> visited = new HashSet<>();
+        List<Point> visited = new ArrayList<>();
+        Map<Point, Point> parentMap = new HashMap<>();
         Point currentPoint = start;
 
         int iterationCount = 0;
@@ -110,6 +111,9 @@ public class PathFinder {
             List<Point> neighbors = getVisitableNeighbors(currentPoint, visited);
             for (Point neighbor : neighbors) {
                 stack.push(neighbor);
+                if (!parentMap.containsKey(neighbor)) {
+                    parentMap.put(neighbor, currentPoint);
+                }
             }
 
             if (stack.isEmpty()) {
@@ -127,9 +131,19 @@ public class PathFinder {
         }
 
         if (currentPoint.equals(end)) {
+            // Reconstruct path by tracing parent pointers back from end to start
+            LinkedListStack<Point> pathStack = new LinkedListStack<>();
+            Point trace = end;
+            while (trace != null && !trace.equals(start)) {
+                pathStack.push(trace);
+                trace = parentMap.get(trace);
+            }
+            pathStack.push(start);
+
             List<Point> path = new ArrayList<>();
-            path.add(start);
-            path.add(end);
+            while (!pathStack.isEmpty()) {
+                path.add(pathStack.pop());
+            }
             return path;
         }
         return null;
@@ -156,11 +170,11 @@ public class PathFinder {
      *   - The returned list is non-null (may be empty)
      * 
      * @param point the point to check neighbors for
-     * @param visited the set of already visited points
+     * @param visited the list of already visited points
      * @return a list of valid neighbor points
      * @throws NullPointerException if point or visited is null
      */
-    private List<Point> getVisitableNeighbors(Point point, Set<Point> visited) {
+    private List<Point> getVisitableNeighbors(Point point, List<Point> visited) {
         Preconditions.checkNotNull(point, "Precondition failed: point cannot be null");
         Preconditions.checkNotNull(visited, "Precondition failed: visited set cannot be null");
 
