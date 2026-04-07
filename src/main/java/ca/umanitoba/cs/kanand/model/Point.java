@@ -70,4 +70,54 @@ public class Point {
     private boolean checkInvariant() {
         return x >= 0 && y >= 0;
     }
+
+    /**
+     * Creates a new builder for Point objects.
+     *
+     * @return a new PointBuilder instance
+     */
+    public static PointBuilder builder() {
+        return new PointBuilder();
+    }
+
+    /**
+     * Builder class for constructing Point objects.
+     * Follows the Builder pattern to separate construction logic from domain logic.
+     */
+    public static class PointBuilder {
+        private int x;
+        private int y;
+
+        /**
+         * Sets the X coordinate.
+         *
+         * @param x the X coordinate (must be non-negative)
+         * @return this builder instance for method chaining
+         */
+        public PointBuilder x(int x) {
+            this.x = x;
+            return this;
+        }
+
+        /**
+         * Sets the Y coordinate.
+         *
+         * @param y the Y coordinate (must be non-negative)
+         * @return this builder instance for method chaining
+         */
+        public PointBuilder y(int y) {
+            this.y = y;
+            return this;
+        }
+
+        /**
+         * Builds and returns a new Point instance with the configured coordinates.
+         *
+         * @return a new Point object
+         * @throws IllegalStateException if x or y is negative
+         */
+        public Point build() {
+            return new Point(this.x, this.y);
+        }
+    }
 }

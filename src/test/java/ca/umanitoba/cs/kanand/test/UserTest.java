@@ -1,6 +1,7 @@
-package ca.umanitoba.cs.kanand.model;
+package ca.umanitoba.cs.kanand.test;
 
-import ca.umanitoba.cs.kanand.test.*;
+import ca.umanitoba.cs.kanand.model.Activity;
+import ca.umanitoba.cs.kanand.model.User;
 
 /**
  * Test suite for User class following COMP 2450 class methodology.

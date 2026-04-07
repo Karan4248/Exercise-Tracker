@@ -79,4 +79,54 @@ public class ObstaclePlacement {
     public static void resetIdCounter() {
         nextId = 1;
     }
+
+    /**
+     * Creates a new builder for ObstaclePlacement objects.
+     *
+     * @return a new ObstaclePlacementBuilder instance
+     */
+    public static ObstaclePlacementBuilder builder() {
+        return new ObstaclePlacementBuilder();
+    }
+
+    /**
+     * Builder class for constructing ObstaclePlacement objects.
+     * Follows the Builder pattern to separate construction logic from domain logic.
+     */
+    public static class ObstaclePlacementBuilder {
+        private Point location;
+        private Obstacle type;
+
+        /**
+         * Sets the location of the obstacle.
+         *
+         * @param location the point where the obstacle is placed
+         * @return this builder instance for method chaining
+         */
+        public ObstaclePlacementBuilder location(Point location) {
+            this.location = location;
+            return this;
+        }
+
+        /**
+         * Sets the type of obstacle.
+         *
+         * @param type the obstacle type
+         * @return this builder instance for method chaining
+         */
+        public ObstaclePlacementBuilder type(Obstacle type) {
+            this.type = type;
+            return this;
+        }
+
+        /**
+         * Builds and returns a new ObstaclePlacement instance with the configured properties.
+         *
+         * @return a new ObstaclePlacement object
+         * @throws NullPointerException if location or type is null
+         */
+        public ObstaclePlacement build() {
+            return new ObstaclePlacement(this.location, this.type);
+        }
+    }
 }

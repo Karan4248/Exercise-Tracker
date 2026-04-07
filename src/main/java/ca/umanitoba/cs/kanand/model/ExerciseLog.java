@@ -106,5 +106,80 @@ public class ExerciseLog {
     public static void resetIdCounter() {
         nextId = 1;
     }
+
+    /**
+     * Creates a new builder for ExerciseLog objects.
+     *
+     * @return a new ExerciseLogBuilder instance
+     */
+    public static ExerciseLogBuilder builder() {
+        return new ExerciseLogBuilder();
+    }
+
+    /**
+     * Builder class for constructing ExerciseLog objects.
+     * Follows the Builder pattern to separate construction logic from domain logic.
+     */
+    public static class ExerciseLogBuilder {
+        private String name;
+        private Exercise exercise;
+        private List<Point> route;
+        private double distance;
+
+        /**
+         * Sets the name of the activity.
+         *
+         * @param name the activity name (must be non-empty)
+         * @return this builder instance for method chaining
+         */
+        public ExerciseLogBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        /**
+         * Sets the exercise type for this log.
+         *
+         * @param exercise the Exercise type
+         * @return this builder instance for method chaining
+         */
+        public ExerciseLogBuilder exercise(Exercise exercise) {
+            this.exercise = exercise;
+            return this;
+        }
+
+        /**
+         * Sets the route points for this activity.
+         *
+         * @param route the list of route points (must be non-empty)
+         * @return this builder instance for method chaining
+         */
+        public ExerciseLogBuilder route(List<Point> route) {
+            this.route = route;
+            return this;
+        }
+
+        /**
+         * Sets the total distance covered in this activity.
+         *
+         * @param distance the distance value
+         * @return this builder instance for method chaining
+         */
+        public ExerciseLogBuilder distance(double distance) {
+            this.distance = distance;
+            return this;
+        }
+
+        /**
+         * Builds and returns a new ExerciseLog instance with the configured properties.
+         *
+         * @return a new ExerciseLog object
+         * @throws NullPointerException if name, exercise, or route is null
+         * @throws IllegalStateException if name or route is empty
+         */
+        public ExerciseLog build() {
+            return new ExerciseLog(this.name, this.exercise, this.route, this.distance);
+        }
+    }
 }
 
