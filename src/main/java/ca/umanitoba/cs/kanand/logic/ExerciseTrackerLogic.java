@@ -449,9 +449,54 @@ public class ExerciseTrackerLogic {
         Preconditions.checkNotNull(start, "Precondition failed: start cannot be null");
         Preconditions.checkNotNull(end, "Precondition failed: end cannot be null");
         Preconditions.checkNotNull(scope, "Precondition failed: scope cannot be null");
+        Preconditions.checkState(currentUser != null, "Precondition failed: no user logged in");
 
-        PathFinder pathFinder = new PathFinder(grid, scope);
-        return pathFinder.findPath(start, end);
+        // Save original covered points so we can restore after pathfinding
+        List<Point> originalCovered = grid.getCoveredPoints();
+
+        // Recompute covered points based on scope
+        grid.clearCoveredPoints();
+
+        // Always include current user's routes
+        for (ExerciseLog log : currentUser.getActivity().getAllLogs()) {
+            for (Point p : log.getPoints()) {
+                if (grid.isInBounds(p)) {
+                    grid.addCoveredPoint(p);
+                }
+            }
+        }
+
+        // For ALL_ROUTES, also include followed users' routes
+        if (scope == RouteScope.ALL_ROUTES) {
+            for (User followed : currentUser.getFollowing()) {
+                for (ExerciseLog log : followed.getActivity().getAllLogs()) {
+                    for (Point p : log.getPoints()) {
+                        if (grid.isInBounds(p)) {
+                            grid.addCoveredPoint(p);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Mark start and end as covered so the algorithm can reach them
+        if (grid.isInBounds(start)) {
+            grid.addCoveredPoint(start);
+        }
+        if (grid.isInBounds(end)) {
+            grid.addCoveredPoint(end);
+        }
+
+        PathFinder pathFinder = new PathFinder(grid);
+        List<Point> result = pathFinder.findPath(start, end);
+
+        // Restore original covered points so global state is unchanged
+        grid.clearCoveredPoints();
+        for (Point p : originalCovered) {
+            grid.addCoveredPoint(p);
+        }
+
+        return result;
     }
 
     /**

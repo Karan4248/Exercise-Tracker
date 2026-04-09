@@ -184,7 +184,7 @@ public class ExerciseTrackerUI {
             case "4" -> viewMyActivitiesFlow();
             case "5" -> editProfileFlow();
             case "6" -> logoutFlow();
-            default -> System.out.println("Invalid choice.");
+            default -> System.out.println("Invalid choice. Please enter a number from 1 to 6.");
         }
     }
 
@@ -241,7 +241,7 @@ public class ExerciseTrackerUI {
                     System.out.println("✓ Following " + selected.getUsername());
                 }
             } else {
-                System.out.println("Invalid user number.");
+                System.out.println("Invalid user number. Please enter a number between 1 and " + others.size() + ".");
             }
         } catch (NumberFormatException e) {
             System.out.println("ERROR: Please enter a number.");
@@ -292,7 +292,7 @@ public class ExerciseTrackerUI {
                     exerciseBuilder.unit(unit);
                     validUnit = true;
                 } catch (IllegalArgumentException e) {
-                    System.out.println("ERROR: Invalid unit.");
+                    System.out.println("ERROR: Invalid unit. Please enter one of: KILOMETERS, MILES, METERS, STEPS.");
                 } catch (InvalidActivityException e) {
                     System.out.println("ERROR: " + e.getMessage());
                 }
@@ -307,7 +307,7 @@ public class ExerciseTrackerUI {
                     logBuilder.distance(distance);
                     validDistance = true;
                 } catch (NumberFormatException e) {
-                    System.out.println("ERROR: Invalid distance.");
+                    System.out.println("ERROR: Please enter a valid number for distance.");
                 } catch (InvalidActivityException e) {
                     System.out.println("ERROR: " + e.getMessage());
                 }
@@ -363,7 +363,7 @@ public class ExerciseTrackerUI {
             case "2" -> enterNewRoute(grid);
             case "3" -> null;
             default -> {
-                System.out.println("Invalid choice.");
+                System.out.println("Invalid choice. Please enter 1, 2, or 3.");
                 yield null;
             }
         };
@@ -396,7 +396,7 @@ public class ExerciseTrackerUI {
                 System.out.println("✓ Route copied.");
                 return new ArrayList<>(previous.get(idx).getPoints());
             } else {
-                System.out.println("Invalid route number.");
+                System.out.println("Invalid route number. Please enter a number between 1 and " + previous.size() + ".");
                 return null;
             }
         } catch (NumberFormatException e) {
@@ -447,7 +447,7 @@ public class ExerciseTrackerUI {
                 Point p = new Point(x, y);
                 
                 if (!grid.isInBounds(p)) {
-                    System.out.println("ERROR: Out of bounds.");
+                    System.out.println("ERROR: Point is out of bounds. Grid is " + grid.getWidth() + "x" + grid.getHeight() + ". Please enter valid coordinates.");
                     i--;
                     continue;
                 }
@@ -483,7 +483,7 @@ public class ExerciseTrackerUI {
                 case "2" -> RouteScope.ALL_ROUTES;
                 case "3" -> null;
                 default -> {
-                    System.out.println("Invalid.");
+                    System.out.println("Invalid choice. Please enter 1, 2, or 3.");
                     yield null;
                 }
             };
@@ -499,7 +499,7 @@ public class ExerciseTrackerUI {
             if (end == null) return;
             
             if (start.equals(end)) {
-                System.out.println("ERROR: Different points needed.");
+                System.out.println("ERROR: Different start and end points are needed for route finding.");
                 return;
             }
             
@@ -551,7 +551,7 @@ public class ExerciseTrackerUI {
                             exerciseBuilder.unit(unit);
                             validUnit = true;
                         } catch (IllegalArgumentException e) {
-                            System.out.println("ERROR: Invalid unit.");
+                            System.out.println("ERROR: Invalid unit. Please enter one of: KILOMETERS, MILES, METERS, STEPS.");
                         } catch (InvalidActivityException e) {
                             System.out.println("ERROR: " + e.getMessage());
                         }
@@ -566,7 +566,7 @@ public class ExerciseTrackerUI {
                             logBuilder.distance(dist);
                             validDistance = true;
                         } catch (NumberFormatException e) {
-                            System.out.println("ERROR: Invalid distance.");
+                            System.out.println("ERROR: Please enter a valid number for distance.");
                         } catch (InvalidActivityException e) {
                             System.out.println("ERROR: " + e.getMessage());
                         }
@@ -616,12 +616,12 @@ public class ExerciseTrackerUI {
             Point p = new Point(x, y);
             
             if (!grid.isInBounds(p)) {
-                System.out.println("ERROR: Out of bounds.");
+                System.out.println("ERROR: Point is out of bounds. Grid is " + grid.getWidth() + "x" + grid.getHeight() + ". Please enter valid coordinates.");
                 return null;
             }
             
             if (grid.getObstacleAt(p) != null) {
-                System.out.println("ERROR: Obstacle at this location.");
+                System.out.println("ERROR: There is an obstacle at this location. Please choose a different point.");
                 return null;
             }
             
@@ -760,7 +760,7 @@ public class ExerciseTrackerUI {
                 Point p = new Point(x, y);
                 
                 if (!grid.isInBounds(p)) {
-                    System.out.println("ERROR: Out of bounds.");
+                    System.out.println("ERROR: Point is out of bounds. Grid is " + grid.getWidth() + "x" + grid.getHeight() + ". Please enter valid coordinates.");
                     continue;
                 }
                 
@@ -776,7 +776,7 @@ public class ExerciseTrackerUI {
                         adding = false;
                     }
                 } catch (IllegalArgumentException e) {
-                    System.out.println("ERROR: Invalid type.");
+                    System.out.println("ERROR: Invalid obstacle type. Please enter one of: TREE, BUILDING, ROCK, WATER.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("ERROR: Enter valid integers.");

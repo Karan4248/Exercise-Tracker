@@ -52,7 +52,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(1, 0));
             grid.addCoveredPoint(new Point(2, 0));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(2, 0));
             
             if (path != null && path.size() > 0 && 
@@ -74,7 +74,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(5, 1));
             grid.addCoveredPoint(new Point(5, 2));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(5, 0), new Point(5, 2));
             
             if (path != null && path.size() > 0 && 
@@ -98,7 +98,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(2, 1));
             grid.addCoveredPoint(new Point(2, 2));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(2, 2));
             
             if (path != null && path.size() > 0 && 
@@ -120,7 +120,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(1, 0));
             grid.addCoveredPoint(new Point(2, 0));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(2, 0));
             
             if (path != null && !path.isEmpty()) {
@@ -140,7 +140,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(1, 0));
             grid.addCoveredPoint(new Point(2, 0));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.MY_ROUTES_ONLY);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(2, 0));
             
             if (path != null && !path.isEmpty()) {
@@ -158,7 +158,7 @@ public class PathFinderTest {
             Grid grid = new Grid(10, 10);
             grid.addCoveredPoint(new Point(5, 5));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(5, 5), new Point(5, 5));
             
             if (path != null && path.size() == 1 && path.get(0).equals(new Point(5, 5))) {
@@ -177,7 +177,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(0, 0));
             grid.addCoveredPoint(new Point(9, 9));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(9, 9));
             
             if (path == null) {
@@ -197,7 +197,7 @@ public class PathFinderTest {
                 grid.addCoveredPoint(new Point(i, 3));
             }
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 3), new Point(4, 3));
             
             if (path != null && path.size() >= 5) {
@@ -220,7 +220,7 @@ public class PathFinderTest {
                 grid.addCoveredPoint(new Point(xs[i], ys[i]));
             }
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(0, 2));
             
             if (path != null && !path.isEmpty()) {
@@ -237,7 +237,7 @@ public class PathFinderTest {
         try {
             Grid grid = new Grid(10, 10);
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(5, 5));
             
             if (path == null) {
@@ -261,7 +261,7 @@ public class PathFinderTest {
             grid.addCoveredPoint(new Point(1, 2));
             grid.addCoveredPoint(new Point(0, 2));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(0, 2));
             
             if (path != null && !path.isEmpty()) {
@@ -283,7 +283,7 @@ public class PathFinderTest {
             
             grid.addObstacle(new ObstaclePlacement(new Point(3, 1), Obstacle.TREE));
             
-            PathFinder pf = new PathFinder(grid, RouteScope.ALL_ROUTES);
+            PathFinder pf = new PathFinder(grid);
             List<Point> path = pf.findPath(new Point(0, 0), new Point(4, 0));
             
             if (path != null && !path.isEmpty()) {

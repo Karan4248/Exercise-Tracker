@@ -54,6 +54,16 @@ public class Point {
     }
 
     /**
+     * Returns a hash code consistent with equals.
+     *
+     * @return the hash code for this point
+     */
+    @Override
+    public int hashCode() {
+        return 31 * x + y;
+    }
+
+    /**
      * Checks the class invariant.
      *
      * @return true if the invariant is satisfied, false otherwise

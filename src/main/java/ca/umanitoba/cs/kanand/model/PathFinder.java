@@ -23,25 +23,21 @@ import java.util.Map;
  */
 public class PathFinder {
     private final Grid grid;
-    private final RouteScope scope;
 
     /**
-     * Creates a PathFinder for the given grid and scope.
+     * Creates a PathFinder for the given grid.
      * 
      * Precondition:
      *   - grid != null
-     *   - scope != null
      * 
      * Postcondition:
      *   - PathFinder is initialized and ready to find paths
      * 
      * @param grid the grid to search on
-     * @param scope the scope for pathfinding (own routes or all routes)
-     * @throws NullPointerException if grid or scope is null
+     * @throws NullPointerException if grid is null
      */
-    public PathFinder(Grid grid, RouteScope scope) {
+    public PathFinder(Grid grid) {
         this.grid = Preconditions.checkNotNull(grid, "Precondition failed: grid cannot be null");
-        this.scope = Preconditions.checkNotNull(scope, "Precondition failed: scope cannot be null");
     }
 
     /**
@@ -133,7 +129,7 @@ public class PathFinder {
         if (currentPoint.equals(end)) {
             // Reconstruct path by tracing parent pointers back from end to start
             LinkedListStack<Point> pathStack = new LinkedListStack<>();
-            Point trace = end;
+            Point trace = currentPoint;
             while (trace != null && !trace.equals(start)) {
                 pathStack.push(trace);
                 trace = parentMap.get(trace);
