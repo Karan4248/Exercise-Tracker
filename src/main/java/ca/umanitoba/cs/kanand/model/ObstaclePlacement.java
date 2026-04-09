@@ -1,7 +1,6 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
-import ca.umanitoba.cs.kanand.exceptions.InvalidPointException;
 
 /**
  * Represents an obstacle placed at a specific location on the grid.
@@ -81,61 +80,4 @@ public class ObstaclePlacement {
         nextId = 1;
     }
 
-    /**
-     * Creates a new builder for ObstaclePlacement objects.
-     *
-     * @return a new ObstaclePlacementBuilder instance
-     */
-    public static ObstaclePlacementBuilder builder() {
-        return new ObstaclePlacementBuilder();
-    }
-
-    /**
-     * Builder class for constructing ObstaclePlacement objects.
-     * Follows the Builder pattern to separate construction logic from domain logic.
-     */
-    public static class ObstaclePlacementBuilder {
-        private Point location;
-        private Obstacle type;
-
-        /**
-         * Sets the location of the obstacle.
-         *
-         * @param location the point where the obstacle is placed
-         * @return this builder instance for method chaining
-         * @throws InvalidPointException if location is null
-         */
-        public ObstaclePlacementBuilder location(Point location) throws InvalidPointException {
-            if (location == null) {
-                throw new InvalidPointException("Obstacle location cannot be null.");
-            }
-            this.location = location;
-            return this;
-        }
-
-        /**
-         * Sets the type of obstacle.
-         *
-         * @param type the obstacle type
-         * @return this builder instance for method chaining
-         * @throws InvalidPointException if type is null
-         */
-        public ObstaclePlacementBuilder type(Obstacle type) throws InvalidPointException {
-            if (type == null) {
-                throw new InvalidPointException("Obstacle type cannot be null.");
-            }
-            this.type = type;
-            return this;
-        }
-
-        /**
-         * Builds and returns a new ObstaclePlacement instance with the configured properties.
-         *
-         * @return a new ObstaclePlacement object
-         * @throws NullPointerException if location or type is null
-         */
-        public ObstaclePlacement build() {
-            return new ObstaclePlacement(this.location, this.type);
-        }
-    }
 }

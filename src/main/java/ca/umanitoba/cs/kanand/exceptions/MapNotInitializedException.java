@@ -13,14 +13,4 @@ public class MapNotInitializedException extends Exception {
     public MapNotInitializedException(String message) {
         super(message);
     }
-
-    /**
-     * Constructs a MapNotInitializedException with a detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause the cause of this exception
-     */
-    public MapNotInitializedException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

@@ -13,14 +13,4 @@ public class InvalidPointException extends Exception {
     public InvalidPointException(String message) {
         super(message);
     }
-
-    /**
-     * Constructs an InvalidPointException with a detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause the cause of this exception
-     */
-    public InvalidPointException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

@@ -13,14 +13,4 @@ public class InvalidCredentialsException extends Exception {
     public InvalidCredentialsException(String message) {
         super(message);
     }
-
-    /**
-     * Constructs an InvalidCredentialsException with a detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause the cause of this exception
-     */
-    public InvalidCredentialsException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

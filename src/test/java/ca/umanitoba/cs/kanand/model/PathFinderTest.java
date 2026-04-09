@@ -1,33 +1,19 @@
 package ca.umanitoba.cs.kanand.model;
 
 import ca.umanitoba.cs.kanand.test.TestResults;
+import ca.umanitoba.cs.kanand.test.TestSuite;
 import java.util.List;
 
-/**
- * Test suite for PathFinder class following COMP 2450 class methodology.
- * 
- * Tests domain behavior:
- * - Pathfinding with valid routes (horizontal, vertical, diagonal)
- * - Pathfinding with no viable path
- * - RouteScope modes (MY_ROUTES_ONLY, ALL_ROUTES)
- * - Path validity and completeness
- * - Start equals end point
- * - Various grid configurations and maze patterns
- * 
- * Uses TestResults to track pass/fail. NO assertion statements.
- */
-public class PathFinderTest {
-    private TestResults results = new TestResults();
+public class PathFinderTest implements TestSuite {
+    private final TestResults results = new TestResults();
 
-    public static void main(String[] args) {
-        PathFinderTest tests = new PathFinderTest();
-        tests.runAllTests();
+    @Override
+    public String name() {
+        return "Tests for PathFinder Class";
     }
 
-    public void runAllTests() {
-        System.out.println("\n╔" + "═".repeat(58) + "╗");
-        System.out.println("║" + " ".repeat(20) + "PathFinder Test Suite" + " ".repeat(17) + "║");
-        System.out.println("╚" + "═".repeat(58) + "╝\n");
+    @Override
+    public TestResults runTests() {
 
         testFindPathSimpleHorizontal();
         testFindPathSimpleVertical();
@@ -42,7 +28,7 @@ public class PathFinderTest {
         testFindPathComplexMaze();
         testFindPathWithObstacles();
 
-        printSummary();
+        return results;
     }
 
     private void testFindPathSimpleHorizontal() {
@@ -296,10 +282,4 @@ public class PathFinderTest {
         }
     }
 
-    private void printSummary() {
-        System.out.println("\n" + "─".repeat(60));
-        System.out.printf("PathFinder: %d passed, %d failed out of %d tests%n", 
-            results.successes(), results.failures(), results.totalTests());
-        System.out.println("─".repeat(60) + "\n");
-    }
 }

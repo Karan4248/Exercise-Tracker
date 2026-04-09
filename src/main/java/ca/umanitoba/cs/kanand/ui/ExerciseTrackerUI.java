@@ -4,6 +4,7 @@ import ca.umanitoba.cs.kanand.logic.ExerciseTrackerLogic;
 import ca.umanitoba.cs.kanand.model.*;
 import ca.umanitoba.cs.kanand.exceptions.*;
 import ca.umanitoba.cs.kanand.printers.ExerciseLogPrinter;
+import ca.umanitoba.cs.kanand.persistence.ExerciseTrackerPersistence;
 
 import java.util.*;
 
@@ -24,13 +25,14 @@ public class ExerciseTrackerUI {
     private boolean running;
 
     /**
-     * Initializes the UI layer with scanner and logic layer.
+     * Initializes the UI layer with scanner and persistence dependency.
      *
      * @param scanner the Scanner for user input
+     * @param persistence the persistence layer for saving/loading data
      */
-    public ExerciseTrackerUI(Scanner scanner) {
+    public ExerciseTrackerUI(Scanner scanner, ExerciseTrackerPersistence persistence) {
         this.scanner = scanner;
-        this.logic = new ExerciseTrackerLogic();
+        this.logic = new ExerciseTrackerLogic(persistence);
         this.running = true;
 
         try {
@@ -235,9 +237,11 @@ public class ExerciseTrackerUI {
                 User selected = others.get(idx);
                 if (current.isFollowing(selected)) {
                     current.removeFollowing(selected);
+                    logic.saveFollowingChange();
                     System.out.println("✓ Unfollowed " + selected.getUsername());
                 } else {
                     current.addFollowing(selected);
+                    logic.saveFollowingChange();
                     System.out.println("✓ Following " + selected.getUsername());
                 }
             } else {

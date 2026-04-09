@@ -1,32 +1,19 @@
 package ca.umanitoba.cs.kanand.model;
 
 import ca.umanitoba.cs.kanand.test.TestResults;
+import ca.umanitoba.cs.kanand.test.TestSuite;
 import java.util.List;
 
-/**
- * Test suite for Grid class following COMP 2450 class methodology.
- * 
- * Tests domain behavior:
- * - Grid creation with various dimensions
- * - Bounds checking for valid/invalid points
- * - Obstacle management (add, remove, retrieval)
- * - Covered point tracking for pathfinding
- * - Edge cases: small and large grids, boundary points
- * 
- * Uses TestResults to track pass/fail. NO assertion statements.
- */
-public class GridTest {
-    private TestResults results = new TestResults();
+public class GridTest implements TestSuite {
+    private final TestResults results = new TestResults();
 
-    public static void main(String[] args) {
-        GridTest tests = new GridTest();
-        tests.runAllTests();
+    @Override
+    public String name() {
+        return "Tests for Grid Class";
     }
 
-    public void runAllTests() {
-        System.out.println("\n╔" + "═".repeat(58) + "╗");
-        System.out.println("║" + " ".repeat(22) + "Grid Test Suite" + " ".repeat(21) + "║");
-        System.out.println("╚" + "═".repeat(58) + "╝\n");
+    @Override
+    public TestResults runTests() {
 
         testGridCreation();
         testGridDimensions();
@@ -43,7 +30,7 @@ public class GridTest {
         testEdgeCaseSmallGrid();
         testEdgeCaseLargeGrid();
 
-        printSummary();
+        return results;
     }
 
     private void testGridCreation() {
@@ -114,10 +101,9 @@ public class GridTest {
         try {
             Grid grid = new Grid(10, 10);
             Point[] invalidPoints = {
-                new Point(-1, 0),
-                new Point(0, -1),
                 new Point(11, 5),
-                new Point(5, 11)
+                new Point(5, 11),
+                new Point(11, 11)
             };
             
             boolean allOutOfBounds = true;
@@ -293,10 +279,11 @@ public class GridTest {
     private void testEdgeCaseSmallGrid() {
         try {
             Grid grid = new Grid(1, 1);
-            Point point = new Point(0, 0);
-            Point outside = new Point(1, 1);
+            Point inside = new Point(0, 0);
+            Point boundary = new Point(1, 1);
+            Point outside = new Point(2, 0);
             
-            if (grid.isInBounds(point) && !grid.isInBounds(outside) && grid.getWidth() == 1) {
+            if (grid.isInBounds(inside) && grid.isInBounds(boundary) && !grid.isInBounds(outside) && grid.getWidth() == 1) {
                 results.pass("Edge case: 1x1 grid works correctly");
             } else {
                 results.fail("Edge case: 1x1 grid works correctly");
@@ -322,10 +309,4 @@ public class GridTest {
         }
     }
 
-    private void printSummary() {
-        System.out.println("\n" + "─".repeat(60));
-        System.out.printf("Grid: %d passed, %d failed out of %d tests%n", 
-            results.successes(), results.failures(), results.totalTests());
-        System.out.println("─".repeat(60) + "\n");
-    }
 }

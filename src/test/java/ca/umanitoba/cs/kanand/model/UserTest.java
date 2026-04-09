@@ -1,33 +1,18 @@
-package ca.umanitoba.cs.kanand.test;
+package ca.umanitoba.cs.kanand.model;
 
-import ca.umanitoba.cs.kanand.model.Activity;
-import ca.umanitoba.cs.kanand.model.User;
+import ca.umanitoba.cs.kanand.test.TestResults;
+import ca.umanitoba.cs.kanand.test.TestSuite;
 
-/**
- * Test suite for User class following COMP 2450 class methodology.
- * 
- * Tests domain behavior:
- * - Valid user creation with different credentials
- * - Authentication (correct/incorrect passwords)
- * - Profile modifications (username, password changes)
- * - Follow/unfollow functionality
- * - Activity container management
- * - Exception handling using try-catch
- * 
- * Uses TestResults to track pass/fail. NO assertion statements.
- */
-public class UserTest {
-    private TestResults results = new TestResults();
+public class UserTest implements TestSuite {
+    private final TestResults results = new TestResults();
 
-    public static void main(String[] args) {
-        UserTest tests = new UserTest();
-        tests.runAllTests();
+    @Override
+    public String name() {
+        return "Tests for User Class";
     }
 
-    public void runAllTests() {
-        System.out.println("\n╔" + "═".repeat(58) + "╗");
-        System.out.println("║" + " ".repeat(24) + "User Test Suite" + " ".repeat(20) + "║");
-        System.out.println("╚" + "═".repeat(58) + "╝\n");
+    @Override
+    public TestResults runTests() {
 
         testUserCreation();
         testAuthenticate();
@@ -42,7 +27,7 @@ public class UserTest {
         testActivityContainer();
         testGetFollowing();
 
-        printSummary();
+        return results;
     }
 
     private void testUserCreation() {
@@ -237,10 +222,4 @@ public class UserTest {
         }
     }
 
-    private void printSummary() {
-        System.out.println("\n" + "─".repeat(60));
-        System.out.printf("User: %d passed, %d failed out of %d tests%n", 
-            results.successes(), results.failures(), results.totalTests());
-        System.out.println("─".repeat(60) + "\n");
-    }
 }

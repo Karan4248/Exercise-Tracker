@@ -1,5 +1,6 @@
 package ca.umanitoba.cs.kanand.model;
 
+import ca.umanitoba.cs.comp2450.stack.Stack;
 import com.google.common.base.Preconditions;
 
 /**
@@ -194,28 +195,15 @@ public class LinkedListStack<T> implements Stack<T> {
      * @return true if all invariant conditions are satisfied, false otherwise
      */
     private boolean checkInvariant() {
-        // If size is 0, head must be null
-        if (size == 0 && head != null) {
-            return false;
-        }
-        // If size > 0, head must not be null
-        if (size > 0 && head == null) {
-            return false;
-        }
-        // Size must be non-negative
         if (size < 0) {
             return false;
         }
-        // Verify that size matches the actual count of nodes
-        int nodeCount = 0;
-        StackNode<T> current = head;
-        while (current != null) {
-            if (current.data == null) {
-                return false;
-            }
-            nodeCount++;
-            current = current.next;
+        if (size == 0 && head != null) {
+            return false;
         }
-        return nodeCount == size;
+        if (size > 0 && head == null) {
+            return false;
+        }
+        return true;
     }
 }

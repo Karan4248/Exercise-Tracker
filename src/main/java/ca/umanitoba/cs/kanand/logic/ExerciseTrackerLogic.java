@@ -3,6 +3,7 @@ package ca.umanitoba.cs.kanand.logic;
 import com.google.common.base.Preconditions;
 import ca.umanitoba.cs.kanand.model.*;
 import ca.umanitoba.cs.kanand.exceptions.*;
+import ca.umanitoba.cs.kanand.persistence.ExerciseTrackerPersistence;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,29 +16,40 @@ import java.util.List;
  * - Validating user input at the logic layer
  * - Coordinating activities between current user and the grid
  * - Managing the application's global state
+ * - Coordinating persistence through the injected persistence layer
  * 
  * Class Invariants:
  *   - users != null
- *   - currentUser ca be null (no logged in user) or a valid User object
+ *   - currentUser can be null (no logged in user) or a valid User object
  *   - grid can be null (map not initialized) or a valid Grid object
  *   - If currentUser != null, currentUser must be in the users list
+ *   - persistence != null
  */
 public class ExerciseTrackerLogic {
     private final List<User> users;
     private User currentUser;
     private Grid grid;
+    private final ExerciseTrackerPersistence persistence;
 
     /**
-     * Initializes the application logic with empty user list and no grid.
+     * Initializes the application logic with a persistence layer.
+     * Loads existing user data from persistent storage.
      * 
+     * Precondition:
+     *   - persistence != null
+     *
      * Postcondition:
-     *   - users list is initialized and empty
+     *   - users list is loaded from persistence (or empty if no data)
      *   - currentUser is null (no user logged in)
      *   - grid is null (map not initialized)
      *   - All invariants are satisfied
+     *
+     * @param persistence the persistence layer for saving/loading data
      */
-    public ExerciseTrackerLogic() {
-        this.users = new ArrayList<>();
+    public ExerciseTrackerLogic(ExerciseTrackerPersistence persistence) {
+        Preconditions.checkNotNull(persistence, "Precondition failed: persistence cannot be null");
+        this.persistence = persistence;
+        this.users = new ArrayList<>(persistence.loadUsers());
         this.currentUser = null;
         this.grid = null;
 
@@ -80,6 +92,8 @@ public class ExerciseTrackerLogic {
 
         User newUser = new User(username, password);
         users.add(newUser);
+
+        persistence.saveUsers(users);
 
         Preconditions.checkState(checkInvariant(), "Invariant violated after createUser");
         Preconditions.checkState(users.contains(newUser), "Postcondition failed: new user not added");
@@ -304,6 +318,8 @@ public class ExerciseTrackerLogic {
 
         currentUser.changeUsername(newUsername);
 
+        persistence.saveUsers(users);
+
         Preconditions.checkState(checkInvariant(), "Invariant violated after changeCurrentUserUsername");
     }
 
@@ -334,6 +350,7 @@ public class ExerciseTrackerLogic {
         boolean changed = currentUser.changePassword(currentPassword, newPassword);
 
         if (changed) {
+            persistence.saveUsers(users);
             Preconditions.checkState(checkInvariant(), "Invariant violated after changeCurrentUserPassword");
         }
 
@@ -368,6 +385,8 @@ public class ExerciseTrackerLogic {
                 }
             }
         }
+
+        persistence.saveUsers(users);
 
         Preconditions.checkState(checkInvariant(), "Invariant violated after addExerciseLogToCurrentUser");
     }
@@ -500,6 +519,17 @@ public class ExerciseTrackerLogic {
     }
 
     /**
+     * Persists the following relationship after a user follows or unfollows another user.
+     * Called by the UI layer after toggling follow status.
+     *
+     * Postcondition:
+     *   - Current state is saved to persistent storage
+     */
+    public void saveFollowingChange() {
+        persistence.saveUsers(users);
+    }
+
+    /**
      * Checks the invariant conditions of this class.
      * 
      * @return true if all invariants are satisfied
@@ -507,6 +537,7 @@ public class ExerciseTrackerLogic {
     private boolean checkInvariant() {
         if (users == null) return false;
         if (currentUser != null && !users.contains(currentUser)) return false;
+        if (persistence == null) return false;
         return true;
     }
 }

@@ -13,14 +13,4 @@ public class UsernameTakenException extends Exception {
     public UsernameTakenException(String message) {
         super(message);
     }
-
-    /**
-     * Constructs a UsernameTakenException with a detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause the cause of this exception
-     */
-    public UsernameTakenException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

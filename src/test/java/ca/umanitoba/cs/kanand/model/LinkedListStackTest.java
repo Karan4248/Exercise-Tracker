@@ -1,30 +1,18 @@
 package ca.umanitoba.cs.kanand.model;
 
 import ca.umanitoba.cs.kanand.test.TestResults;
+import ca.umanitoba.cs.kanand.test.TestSuite;
 
-/**
- * Test suite for LinkedListStack<T> implementation.
- * 
- * Tests domain behavior following COMP 2450 class methodology with professor's pattern:
- * - Uses TestResults to track pass/fail counts
- * - Try-catch blocks to verify exceptions are properly thrown
- * - Tests valid inputs and edge cases only
- * - NO assertion statements
- * 
- * Edge cases: empty stack, single element, sequence operations, LIFO order.
- */
-public class LinkedListStackTest {
-    private TestResults results = new TestResults();
+public class LinkedListStackTest implements TestSuite {
+    private final TestResults results = new TestResults();
 
-    public static void main(String[] args) {
-        LinkedListStackTest tests = new LinkedListStackTest();
-        tests.runAllTests();
+    @Override
+    public String name() {
+        return "Tests for LinkedListStack Class";
     }
 
-    public void runAllTests() {
-        System.out.println("\n╔" + "═".repeat(58) + "╗");
-        System.out.println("║" + " ".repeat(16) + "LinkedListStack Test Suite" + " ".repeat(16) + "║");
-        System.out.println("╚" + "═".repeat(58) + "╝\n");
+    @Override
+    public TestResults runTests() {
 
         testEmptyStackIsEmpty();
         testEmptyStackSizeZero();
@@ -36,7 +24,7 @@ public class LinkedListStackTest {
         testMixedSequence();
         testPointStack();
 
-        printSummary();
+        return results;
     }
 
     /**
@@ -222,10 +210,4 @@ public class LinkedListStackTest {
         }
     }
 
-    private void printSummary() {
-        System.out.println("\n" + "─".repeat(60));
-        System.out.printf("LinkedListStack: %d passed, %d failed out of %d tests%n", 
-            results.successes(), results.failures(), results.totalTests());
-        System.out.println("─".repeat(60) + "\n");
-    }
 }

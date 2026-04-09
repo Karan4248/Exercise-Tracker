@@ -1,7 +1,6 @@
 package ca.umanitoba.cs.kanand.model;
 
 import com.google.common.base.Preconditions;
-import ca.umanitoba.cs.kanand.exceptions.InvalidCredentialsException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +64,20 @@ public class User {
     public String getUsername() {
         Preconditions.checkState(checkInvariant(), "Invariant violated before getUsername()");
         return username;
+    }
+
+    /**
+     * Gets the password for persistence purposes only.
+     * Should only be called by the persistence layer.
+     *
+     * Postcondition:
+     *   - The returned password is non-null and non-empty
+     *
+     * @return the password
+     */
+    public String getPasswordForPersistence() {
+        Preconditions.checkState(checkInvariant(), "Invariant violated before getPasswordForPersistence()");
+        return password;
     }
 
     /**
@@ -276,64 +289,5 @@ public class User {
             }
         }
         return true;
-    }
-
-    /**
-     * Creates a new builder for User objects.
-     *
-     * @return a new UserBuilder instance
-     */
-    public static UserBuilder builder() {
-        return new UserBuilder();
-    }
-
-    /**
-     * Builder class for constructing User objects.
-     * Follows the Builder pattern to separate construction logic from domain logic.
-     */
-    public static class UserBuilder {
-        private String username;
-        private String password;
-
-        /**
-         * Sets the username for the User.
-         *
-         * @param username the username (must be non-empty)
-         * @return this builder instance for method chaining
-         * @throws InvalidCredentialsException if username is null or empty
-         */
-        public UserBuilder username(String username) throws InvalidCredentialsException {
-            if (username == null || username.isEmpty()) {
-                throw new InvalidCredentialsException("Username cannot be null or empty.");
-            }
-            this.username = username;
-            return this;
-        }
-
-        /**
-         * Sets the password for the User.
-         *
-         * @param password the password (must be non-empty)
-         * @return this builder instance for method chaining
-         * @throws InvalidCredentialsException if password is null or empty
-         */
-        public UserBuilder password(String password) throws InvalidCredentialsException {
-            if (password == null || password.isEmpty()) {
-                throw new InvalidCredentialsException("Password cannot be null or empty.");
-            }
-            this.password = password;
-            return this;
-        }
-
-        /**
-         * Builds and returns a new User instance with the configured properties.
-         *
-         * @return a new User object
-         * @throws NullPointerException if username or password is null
-         * @throws IllegalStateException if username or password is empty
-         */
-        public User build() {
-            return new User(this.username, this.password);
-        }
     }
 }

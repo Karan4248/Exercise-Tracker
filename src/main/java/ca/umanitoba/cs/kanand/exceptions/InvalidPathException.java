@@ -13,14 +13,4 @@ public class InvalidPathException extends Exception {
     public InvalidPathException(String message) {
         super(message);
     }
-
-    /**
-     * Constructs an InvalidPathException with a detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause the cause of this exception
-     */
-    public InvalidPathException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

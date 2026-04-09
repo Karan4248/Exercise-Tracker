@@ -1,5 +1,6 @@
 package ca.umanitoba.cs.kanand.model;
 
+import ca.umanitoba.cs.comp2450.stack.Stack;
 import com.google.common.base.Preconditions;
 import ca.umanitoba.cs.kanand.exceptions.InvalidPathException;
 import java.util.ArrayList;
@@ -188,18 +189,18 @@ public class PathFinder {
             int newX = point.getX() + dir[0];
             int newY = point.getY() + dir[1];
 
-            try {
-                Point neighbor = new Point(newX, newY);
-
-                if (grid.isInBounds(neighbor) &&
-                    !visited.contains(neighbor) &&
-                    grid.getObstacleAt(neighbor) == null &&
-                    grid.isCovered(neighbor)) {
-
-                    neighbors.add(neighbor);
-                }
-            } catch (Exception e) {
+            if (newX < 0 || newY < 0) {
                 continue;
+            }
+
+            Point neighbor = new Point(newX, newY);
+
+            if (grid.isInBounds(neighbor) &&
+                !visited.contains(neighbor) &&
+                grid.getObstacleAt(neighbor) == null &&
+                grid.isCovered(neighbor)) {
+
+                neighbors.add(neighbor);
             }
         }
 
